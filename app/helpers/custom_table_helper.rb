@@ -90,6 +90,7 @@ module CustomTableHelper
   end
 
   def current_user_has_custom_fields_for?(model)
+    return false if current_user.nil?
     custom_table_fields_for(model).reject { |_x, y| [:always].exclude?(y[:appear]) }.keys.count.positive?
   end
 

@@ -89,10 +89,11 @@
 
       .btn-group
         = f.button :submit, :class => "btn-sm btn-primary", value: t("search")
-        - if current_user_has_custom_fields_for?(search_model) && !local_assigns[:hide_customization] && !local_assigns[:fields]
+        - if user_signed_in? && current_user_has_custom_fields_for?(search_model) && !local_assigns[:hide_customization] && !local_assigns[:fields]
           = render "custom_table/settings_button", search_model: search_model, representation: representation
 
       = yield f
 
 #customize-items.modal.fade(tabindex="-1" role="dialog" aria-labelledby="loginLabel" aria-hidden="true")
-  = render partial: "custom_table/settings", locals: {search_model: search_model, representation: representation}
+  - if user_signed_in?
+    = render partial: "custom_table/settings", locals: {search_model: search_model, representation: representation}
