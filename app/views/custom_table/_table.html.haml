@@ -1,0 +1,124 @@
+- model_class = local_assigns[:model_class].presence || collection.model
+- global_model_name = model_class.model_name.singular
+- fields_totals = {}
+
+- local_assigns[:fields] = params[:fields].split(",").map { |x| x.to_sym } if local_assigns[:fields].nil? && !params[:fields].blank?
+- local_assigns[:skip_actions] = true if local_assigns[:skip_actions].nil? && params[:skip_actions].to_s=="true"
+
+- fields = custom_table_fields_for(model_class, representation: local_assigns[:representation], predefined_fields: local_assigns[:fields]) 
+
+- fields = fields.except(*local_assigns[:skip_fields]) if !local_assigns[:skip_fields].nil?
+
+%table{class: ["search-fields", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table"}}
+  %thead.sticky
+    %tr
+      - if local_assigns[:with_index]
+        %th= "#"
+      - fields.each do |field, defs|
+        - next if defs[:table] == false
+        - cls = [field.to_s]
+        - defs[:amount] = true if !model_class.columns_hash[field.to_s].nil? && [:float, :decimal, :integer].include?(model_class.columns_hash[field.to_s].type) && !model_class.defined_enums.has_key?(field.to_s)
+        - cls += ["text-end"] if defs[:amount]
+        %th{class: cls}
+          - if !defs[:sort].nil? && !@q.nil?
+            - defs[:sort] = {} if defs[:sort]===true
+            - sort_field = defs[:sort][:field].blank? ? field : defs[:sort][:field]
+            - sort_order = defs[:sort][:default_order].blank? ? :asc : defs[:sort][:default_order]
+            - if !@q.nil?
+              = sort_link @q, sort_field, default_order: sort_order do
+                = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
+          - else
+            = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
+
+      - if !local_assigns[:skip_actions]
+        %th.text-end
+
+  %tbody
+
+    - position = 0
+
+    - collection.each do |item|
+
+      - model_name = item.model_name.singular # Allows to show different class models in one table!
+      %tr{:class => (self.send("#{model_name}_row_class", item) rescue "")}
+
+        - if local_assigns[:with_index]
+          %td
+            = position+=1
+
+        - fields.each do |field, defs|
+          - next if defs[:table] == false
+          - td_classes = [field.to_s]
+          - td_classes += ["text-end"] if defs[:amount]
+
+          %td{class: td_classes}
+            - v = field_value_for(item, field, defs)
+
+            - if !!(Float(v) rescue false)
+              - fields_totals[field] = 0 if fields_totals[field].nil?
+              - fields_totals[field] += v.to_f
+
+            - if defs[:link_to_show] == true && has_show_route?(item)
+              = link_to v, item
+            - else
+              = v
+
+        - if !local_assigns[:skip_actions]
+
+          %td.text-end.actions
+            - if !local_assigns[:actions].nil?
+              = self.send(local_assigns[:actions], item)
+            - elsif self.class.method_defined?("#{model_name}_custom_table_actions")
+              = self.send("#{model_name}_table_actions", item)
+            - if local_assigns[:skip_default_actions].nil?
+              - if !has_show_route?(item) && can?(:update, item)
+                = edit_button [:edit, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}"
+              - if can? :destroy, item
+                = delete_button [local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}", data: turbo_frame_request? ? {} : {}
+
+    - if local_assigns.has_key?(:extra) && !extra.nil?
+      - extra.each do |er|
+        - fields.each do |field, defs|
+          - next if defs[:table] == false
+          %td{class: [field.to_s]}
+            = er[field]
+        %td
+
+
+    - if collection.length == 0
+      %tr.warning.text-center
+        %th{:colspan=>"100%"}= t("no_records_found")
+    - else
+      - if local_assigns.has_key?(:totals) && !totals.nil?
+        %tr.totals{data: {"table-target": "move"}}
+          - if local_assigns[:with_index]
+            %th
+          - fields.each do |field, defs|
+            - next if defs[:table] == false
+            %th{class: [field.to_s, "text-end"]}
+              - if totals.include?(field)
+                - if totals[field].nil?
+                  - if !model_class.columns_hash[field.to_s].nil?
+                    = cfc collection.except(:limit, :offset, :order).sum(field)
+                  - else
+                    = cfc fields_totals[field]
+                - else
+                  = cfc totals[field]
+          %th.text-end
+
+- if collection.respond_to? :total_pages
+  -# - if turbo_frame_request?
+  -#   - if !collection.last_page?
+  -#     = link_to_next_page collection, raw(t('views.pagination.next'))
+  -# - else
+  %nav.float-end.ms-2
+    %ul.pagination
+      - [25, 50, 100].each do |p|
+        %li.page-item{class: (collection.limit_value.to_i == p) ? "active" : ""}
+          = link_to p, url_for(params.permit!.merge({:per => p})), class: "page-link"
+
+  = paginate collection, theme: 'bootstrap-5'
+
+- "TODO: Remove with param"
+- if false && turbo_frame_request? && params[:q].present?
+  = link_to t("show_all"), url_for(q: params[:q]), data: {turbo: false}, class: "text-right"

@@ -1,0 +1,83 @@
+global_model_name = collection.model.model_name.singular
+
+sheet.add_row []
+
+fields = custom_table_fields_for(collection.model) 
+
+unless local_assigns[:fields].nil?
+  fields = fields.select { |k, _v| local_assigns[:fields].include?(k) }
+end
+
+if defined?(style)
+  unless defined?(aligned_style)
+    aligned_style = style.add_style alignment: { horizontal: :left }
+  end
+  unless defined?(date_style)
+    date_style = style.add_style(format_code: 'dd.mm.yyyy', alignment: { horizontal: :left })
+  end
+
+  unless defined?(head_style)
+    head_style = s.add_style b: true, alignment: { horizontal: :left }
+  end
+end
+
+head = []
+fields.each do |field, defs|
+  next if defs[:table] == false
+
+  head.push defs[:label].nil? ? collection.model.human_attribute_name(field) : defs[:label]
+end
+
+if defined?(extra_head)
+  head += extra_head.call
+end
+
+sheet.add_row(head, style: head_style)
+collection.each do |item|
+  row_def = []
+  row = []
+  style_def = []
+
+  model_name = item.model_name.singular # Allows to show different class models in one table!
+
+  fields.each do |field, defs|
+    next if defs[:table] == false
+
+    value = nil
+
+    if self.class.method_defined?("#{model_name}_#{field}_raw")
+      value = send("#{model_name}_#{field}_raw", item)
+    elsif self.class.method_defined?("#{global_model_name}_#{field}_raw")
+      value = send("#{global_model_name}_#{field}_raw", item)
+    else
+      begin
+        value = item.send(field)
+      rescue StandardError
+        value = nil
+      end
+    end
+
+    val_def = nil
+    val_style = aligned_style
+
+    if [Date, ActiveSupport::TimeWithZone].include?(value.class)
+      value = value.to_date
+      val_def = :date
+      val_style = date_style if defined?(date_style)
+    end
+
+    if [String].include?(value.class)
+      val_def = :string
+    end
+
+    row.push value
+    row_def.push val_def
+    style_def.push val_style
+  end
+
+  if defined?(extra_cols)
+    row += extra_cols.call(item)
+  end
+
+  sheet.add_row(row, style: aligned_style, types: row_def)
+end

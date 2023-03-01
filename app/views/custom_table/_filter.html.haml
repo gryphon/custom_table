@@ -1,0 +1,98 @@
+.card
+
+  .card-body.bg-light
+
+    - url = nil if !defined?("url")
+    - representation = nil if !defined?("representation")
+
+    - a = {}
+
+    = custom_table_form_for @q, url: url do |f|
+
+      .d-none
+        = f.input :s, as: :hidden, input_html: {value: params[:q].try(:[], :s)}
+
+      - fields = custom_table_fields_for(search_model, representation: representation, current_search: params[:q]) if local_assigns[:fields].nil?
+
+      - fields.each do |key, defs|
+
+        - next if defs[:search].nil?
+
+        - a[key] = []
+
+        - defs[:search] = [defs[:search]] if !defs[:search].kind_of?(Array)
+        - defs[:label] = defs[:search][0][:label] if defs[:label].nil?
+        - defs[:label] = search_model.human_attribute_name(key) if defs[:label].nil?
+
+        - defs[:search].each do |field|
+
+          - a[key].push field[:q]
+
+          - if field[:type] == :text
+
+            = f.input field[:q], input_html: {class: "form-control-sm"}, required: false, label: false, placeholder: defs[:label]
+
+          - if field[:type] == :boolean
+
+            = f.input field[:q], as: :boolean, input_html: {}, required: false, label: field[:label] || defs[:label], unchecked_value: ""
+
+          - if field[:type] == :switch
+
+            = f.input field[:q], as: :select, input_html: {:class => "form-select form-select-sm"}, required: false, label: false, :collection => [[t("yes")+" | #{defs[:label]}", "true"], [t("no")+" | #{defs[:label]}", "false"]], include_blank: defs[:label]
+
+          - if field[:type] == :select
+
+            - collection = field[:collection]
+            - label_method = nil
+
+            - if collection.class.to_s =~ /ActiveRecord_Relation/i
+              - collection = collection.accessible_by(current_ability) 
+              - label_method = :to_s
+
+            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => collection, label_method: label_method, include_blank: defs[:label]
+
+          - if field[:type] == :grouped_select
+
+            - collection = field[:collection]
+
+            - collection = collection.accessible_by(current_ability) if collection.class.to_s =~ /ActiveRecord_Relation/i
+
+            = f.input field[:q], :as => :grouped_select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, group_method: field[:group_method], :collection => collection, include_blank: defs[:label]
+
+          - if field[:type] == :autocomplete
+
+            - collection = field[:collection]
+
+            - collection = collection.accessible_by(current_ability) if collection.class.to_s =~ /ActiveRecord_Relation/i
+
+            = f.input field[:q], :as => :autocomplete, :input_html => {:class => "input-sm"}, :required => false, :label => false, :collection => collection, prompt: defs[:label]
+
+          - if field[:type] == :enum
+
+            - collection = field[:collection]
+            - collection = [search_model, key.to_s.pluralize] if collection.nil?
+
+            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => collection[0].send(collection[1]).keys.map { |w| [collection[0].human_enum_name(collection[1].to_s.singularize, w), w] }, include_blank: defs[:label]
+
+          - if field[:type] == :dates
+            .col-12
+              .input-group.input-group-sm{"data-controller": "dates"}
+                = f.input_field field[:q][0], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateFrom"}, :placeholder => defs[:label]+" ("+t("custom_table.date_from")+")"
+                = f.input_field field[:q][1], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateTo"}, :placeholder => defs[:label]+" ("+t("custom_table.date_to")+")"
+                %button.btn.btn-outline-secondary.dropdown-toggle(type="button" data-bs-toggle="dropdown" aria-expanded="false")
+                %ul.dropdown-menu.dropdown-menu-end
+                  %button.dropdown-item{type: "button", "data-action": "dates#prevWeek"}= t("analytics.previos_week")
+                  %button.dropdown-item{type: "button", "data-action": "dates#prevMonth"}= t("analytics.previos_month")
+                  %button.dropdown-item{type: "button", "data-action": "dates#prevYear"}= t("analytics.previos_year")
+                  %hr.dropdown-divider
+                  %button.dropdown-item{type: "button", "data-action": "dates#clear"}= t("clear")
+
+      .btn-group
+        = f.button :submit, :class => "btn-sm btn-primary", value: t("search")
+        - if current_user_has_custom_fields_for?(search_model) && !local_assigns[:hide_customization] && !local_assigns[:fields]
+          = render "custom_table/settings_button", search_model: search_model, representation: representation
+
+      = yield f
+
+#customize-items.modal.fade(tabindex="-1" role="dialog" aria-labelledby="loginLabel" aria-hidden="true")
+  = render partial: "custom_table/settings", locals: {search_model: search_model, representation: representation}
