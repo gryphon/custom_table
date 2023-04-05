@@ -59,7 +59,7 @@
               - fields_totals[field] += v.to_f
 
             - if defs[:link_to_show] == true && has_show_route?(item)
-              = link_to v, item
+              = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
             - else
               = v
 
@@ -72,9 +72,9 @@
               = self.send("#{model_name}_table_actions", item)
             - if local_assigns[:skip_default_actions].nil?
               - if !has_show_route?(item) && can?(:update, item)
-                = edit_button [:edit, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}"
+                = edit_button url_for(controller: controller_name, action: "edit", id: item.id), id: "edit_#{item.model_name.singular}_#{item.id}"
               - if can? :destroy, item
-                = delete_button [local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}", data: turbo_frame_request? ? {} : {}
+                = delete_button url_for(controller: controller_name, action: "destroy", id: item.id), id: "destroy_#{item.model_name.singular}_#{item.id}", data: turbo_frame_request? ? {} : {}
 
     - if local_assigns.has_key?(:extra) && !extra.nil?
       - extra.each do |er|
