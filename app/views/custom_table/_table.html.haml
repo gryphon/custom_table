@@ -2,8 +2,6 @@
 - global_model_name = model_class.model_name.singular
 - fields_totals = {}
 
-- namespace = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
-
 - local_assigns[:fields] = params[:fields].split(",").map { |x| x.to_sym } if local_assigns[:fields].nil? && !params[:fields].blank?
 - local_assigns[:skip_actions] = true if local_assigns[:skip_actions].nil? && params[:skip_actions].to_s=="true"
 
@@ -71,12 +69,12 @@
             - if !local_assigns[:actions].nil?
               = self.send(local_assigns[:actions], item)
             - elsif self.class.method_defined?("#{model_name}_custom_table_actions")
-              = self.send("#{model_name}_table_actions", item)
+              = self.send("#{model_name}_custom_table_actions", item)
             - if local_assigns[:skip_default_actions].nil?
-              - if !has_show_route?(item) && can?(:update, item)
-                = edit_button url_for(controller: controller_name, action: "edit", id: item.id), id: "edit_#{item.model_name.singular}_#{item.id}"
+              - if (!has_show_route?(item) || local_assigns[:force_edit_button]) && can?(:update, item)
+                = edit_button [:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}"
               - if can? :destroy, item
-                = delete_button url_for(controller: controller_name, action: "destroy", id: item.id), id: "destroy_#{item.model_name.singular}_#{item.id}", data: turbo_frame_request? ? {} : {}
+                = delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}", data: turbo_frame_request? ? {} : {}
 
     - if local_assigns.has_key?(:extra) && !extra.nil?
       - extra.each do |er|

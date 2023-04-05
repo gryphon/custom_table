@@ -95,6 +95,9 @@ module CustomTableHelper
   end
 
   def custom_table **params
+
+    params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
+    
     render "custom_table/table", params do
       yield
     end
