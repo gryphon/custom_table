@@ -89,7 +89,7 @@
 
       .btn-group
         = f.button :submit, :class => "btn-sm btn-primary", value: t("search")
-        - if user_signed_in? && current_user_has_custom_fields_for?(search_model) && !local_assigns[:hide_customization] && !local_assigns[:fields]
+        - if user_signed_in? && current_user_has_custom_fields_for?(search_model) && !local_assigns[:hide_customization] && !local_assigns[:fields] && !(settings_user_path(current_user) rescue nil).nil?
           = render "custom_table/settings_button", search_model: search_model, representation: representation
 
       = yield f

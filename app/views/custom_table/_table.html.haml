@@ -2,6 +2,8 @@
 - global_model_name = model_class.model_name.singular
 - fields_totals = {}
 
+- namespace = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
+
 - local_assigns[:fields] = params[:fields].split(",").map { |x| x.to_sym } if local_assigns[:fields].nil? && !params[:fields].blank?
 - local_assigns[:skip_actions] = true if local_assigns[:skip_actions].nil? && params[:skip_actions].to_s=="true"
 
