@@ -1,14 +1,13 @@
-require 'rubygems'
-require 'rails'
-
 module CustomTable
-  module Rails
-    class Engine < ::Rails::Engine
-      initializer 'custom_table.assets' do |app|
-        %w(stylesheets javascripts).each do |sub|
-          app.config.assets.paths << root.join('assets', sub).to_s
-        end
-      end
+  class Engine < ::Rails::Engine
+    isolate_namespace CustomTable
+
+    config.generators do |g|
+      g.test_framework :rspec
+      g.fixture_replacement :factory_bot
+      g.factory_bot dir: 'spec/factories'
+  
     end
+
   end
 end

@@ -3,7 +3,7 @@
   .btn-group
     = link_to params.permit!.merge({:format => :xlsx}), :class => "btn btn-outline-primary" do
       = t("download")
-      %i.fa.fa-download
+      %i.bi.bi-download
 
     - if local_assigns[:downloads] && downloads.length > 0
 

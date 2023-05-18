@@ -1,25 +1,31 @@
-$:.push File.expand_path("../lib", __FILE__)
-require "custom_table/version"
+require_relative "lib/custom_table/version"
 
-Gem::Specification.new do |s|
-  s.name        = "custom_table"
-  s.version     = CustomTable::VERSION
-  s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Grigory"]
-  s.email       = ["mail@grigor.io"]
-  s.homepage    = "http://github.com/gryphon/custom_table"
-  s.summary     = %q{Easy tables with filters}
-  s.description = %q{Easy tables with filters}
+Gem::Specification.new do |spec|
+  spec.name        = "custom_table"
+  spec.version     = CustomTable::VERSION
+  spec.authors     = ["Grigory"]
+  spec.email       = ["mail@grigor.io"]
+  spec.homepage    = "http://github.com/gryphon/custom_table"
+  spec.summary     = %q{Easy tables with filters}
+  spec.description = %q{Easy tables with filters}
   
-  #s.files         = `git ls-files`.split("\n")
-  #s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.files = Dir['assets/**/*']
-  
-  s.require_paths = ["lib"]
+  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
+  # to allow pushing to a single host or delete this section to allow pushing to any host.
+  # spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
-  s.add_dependency "rails", "~> 7.0"
-  s.add_dependency "ransack", '~> 3.2'
-  s.add_dependency "kaminari", '~> 1.2'
-  s.add_dependency "caxlsx_rails", '~> 0.6'
+  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["source_code_uri"] = spec.homepage
+  # spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
 
+  spec.files = Dir.chdir(File.expand_path(__dir__)) do
+    Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+  end
+
+  spec.add_development_dependency "rspec-rails"
+  spec.add_development_dependency "factory_bot_rails"
+
+  spec.add_dependency "rails", "~> 7.0"
+  spec.add_dependency "ransack", '~> 4.0'
+  spec.add_dependency "kaminari", '~> 1.2'
+  spec.add_dependency "caxlsx_rails", '~> 0.6'
 end

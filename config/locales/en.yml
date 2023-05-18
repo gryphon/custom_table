@@ -1,0 +1,8 @@
+en:
+  custom_table:
+    customize_table: Choose columns
+    customize_table_description: Choose columns you want to see in the table and sort them
+    customization_not_allowed: Customization of %{model} table is not allowed
+    customization_saved: Table columns customization saved!
+    cannot_save_customization: Cannot save customization
+

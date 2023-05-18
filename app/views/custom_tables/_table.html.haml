@@ -17,7 +17,7 @@
       - fields.each do |field, defs|
         - next if defs[:table] == false
         - cls = [field.to_s]
-        - defs[:amount] = true if !model_class.columns_hash[field.to_s].nil? && [:float, :decimal, :integer].include?(model_class.columns_hash[field.to_s].type) && !model_class.defined_enums.has_key?(field.to_s)
+        - defs[:amount] = true if defs[:amount].nil? && !model_class.columns_hash[field.to_s].nil? && [:float, :decimal, :integer].include?(model_class.columns_hash[field.to_s].type) && !model_class.defined_enums.has_key?(field.to_s)
         - cls += ["text-end"] if defs[:amount]
         %th{class: cls}
           - if !defs[:sort].nil? && !@q.nil?
@@ -40,7 +40,8 @@
     - collection.each do |item|
 
       - model_name = item.model_name.singular # Allows to show different class models in one table!
-      %tr{:class => (self.send("#{model_name}_row_class", item) rescue "")}
+      -# = render partial: "custom_tables/table_row", locals: local_assigns.merge(item: item, position: position, fields: fields, fields_totals: fields_totals)
+      %tr{id: dom_id(item, "row"), :class => (self.send("#{model_name}_row_class", item) rescue "")}
 
         - if local_assigns[:with_index]
           %td
@@ -50,8 +51,9 @@
           - next if defs[:table] == false
           - td_classes = [field.to_s]
           - td_classes += ["text-end"] if defs[:amount]
+          - td_classes += ["text-nowrap"] if defs[:nowrap]
 
-          %td{class: td_classes}
+          %td{class: td_classes, id: dom_id(item, field)}
             - v = field_value_for(item, field, defs)
 
             - if !!(Float(v) rescue false)
@@ -59,7 +61,8 @@
               - fields_totals[field] += v.to_f
 
             - if defs[:link_to_show] == true && has_show_route?(item)
-              = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
+              -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
+              = link_to v, [namespace, item]
             - else
               = v
 
@@ -117,7 +120,11 @@
         %li.page-item{class: (collection.limit_value.to_i == p) ? "active" : ""}
           = link_to p, url_for(params.permit!.merge({:per => p})), class: "page-link"
 
-  = paginate collection, theme: 'bootstrap-5'
+  - begin
+    = paginate(collection, theme: 'bootstrap-5') 
+  - rescue
+    = link_to_prev_page collection, t("views.pagination.previous"), class: "btn btn-outline-primary"
+    = link_to_next_page collection, t("views.pagination.next"), class: "btn btn-outline-primary"
 
 - "TODO: Remove with param"
 - if false && turbo_frame_request? && params[:q].present?

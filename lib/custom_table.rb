@@ -1,7 +1,6 @@
-require 'rails'
+require "custom_table/version"
+require "custom_table/engine"
 
 module CustomTable
-  module Rails
-    require 'custom_table/engine'
-  end
+  # Your code goes here...
 end

@@ -1,0 +1,26 @@
+- model_class = item.class
+- fields = custom_table_fields_for(model_class, representation: local_assigns[:representation], predefined_fields: local_assigns[:fields]) 
+- model_name = item.model_name.singular # Allows to show different class models in one table!
+
+- fields.each do |field, defs|
+  - next if defs[:table] == false
+
+  = turbo_stream.update dom_id(item, field) do
+    - v = field_value_for(item, field, defs)
+
+    - if defs[:link_to_show] == true && has_show_route?(item)
+      -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
+      = link_to v, [namespace, item]
+    - else
+      = v
+
+  -# %td.text-end.actions
+  -#   - if !local_assigns[:actions].nil?
+  -#     = self.send(local_assigns[:actions], item)
+  -#   - elsif self.class.method_defined?("#{model_name}_custom_table_actions")
+  -#     = self.send("#{model_name}_custom_table_actions", item)
+  -#   - if local_assigns[:skip_default_actions].nil?
+  -#     - if (!has_show_route?(item) || local_assigns[:force_edit_button]) && can?(:update, item)
+  -#       = edit_button [:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}"
+  -#     - if can? :destroy, item
+  -#       = delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}", data: turbo_frame_request? ? {} : {}

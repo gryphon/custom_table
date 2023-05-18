@@ -1,0 +1,7 @@
+ru:
+  custom_table:
+    customize_table: Настроить колонки
+    customize_table_description: Выберите колонки, которые вы хотите видеть в таблице, и отсортируйте порядок их показа
+    customization_not_allowed: Настройка таблицы %{model} не предусмотрена
+    customization_saved: Настройки таблицы сохранены!
+    cannot_save_customization: Ошибка при сохранении настроек таблицы
