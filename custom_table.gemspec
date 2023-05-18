@@ -23,9 +23,14 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "rspec-rails"
   spec.add_development_dependency "factory_bot_rails"
+  spec.add_development_dependency "capybara"  
 
   spec.add_dependency "rails", "~> 7.0"
   spec.add_dependency "ransack", '~> 4.0'
   spec.add_dependency "kaminari", '~> 1.2'
+  spec.add_dependency "devise", '~> 4.9'
+  spec.add_dependency "cancancan"
+  spec.add_dependency "haml-rails"
+  spec.add_dependency "simple_form"
   spec.add_dependency "caxlsx_rails", '~> 0.6'
 end

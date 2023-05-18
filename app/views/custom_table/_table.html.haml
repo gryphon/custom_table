@@ -77,7 +77,7 @@
               - if (!has_show_route?(item) || local_assigns[:force_edit_button]) && can?(:update, item)
                 = edit_button [:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}"
               - if can? :destroy, item
-                = delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}", data: turbo_frame_request? ? {} : {}
+                = delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}"
 
     - if local_assigns.has_key?(:extra) && !extra.nil?
       - extra.each do |er|
@@ -126,6 +126,6 @@
     = link_to_prev_page collection, t("views.pagination.previous"), class: "btn btn-outline-primary"
     = link_to_next_page collection, t("views.pagination.next"), class: "btn btn-outline-primary"
 
-- "TODO: Remove with param"
-- if false && turbo_frame_request? && params[:q].present?
-  = link_to t("show_all"), url_for(q: params[:q]), data: {turbo: false}, class: "text-right"
+-# - "TODO: Remove with param"
+-# - if false && turbo_frame_request? && params[:q].present?
+-#   = link_to t("show_all"), url_for(q: params[:q]), data: {turbo: false}, class: "text-right"

@@ -8,6 +8,10 @@ module CustomTableConcern
   class_methods do 
   end
 
+  def format_web
+    !(request.format.xlsx? || request.format.csv?)
+  end
+
   def custom_table collection, representation = nil, paginate: true, default_sorts: "created_at asc", default_query: nil
     @q = collection.ransack(params[:q])
 

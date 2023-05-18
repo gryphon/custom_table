@@ -1,11 +1,35 @@
 module CustomTable
   module ApplicationHelper
 
+    def delete_button(path, options = {})
+      button_to "Destroy", path, method: "delete"
+    end
+
+    def edit_button(path, options = {})
+      link_to "Edit", path
+    end  
+
+    def has_show_route?(item)
+      return (!url_for(controller: item.model_name.plural, action: "show", id: 1).nil?) rescue return false
+    end
+
     def custom_table_form_for(record, options = {}, &block)
       options[:url] = request.path if options[:url].nil?
       options[:method] = :get
   
-      inline_form_for(record, options, &block)
+      options[:html] ||= {} 
+      options[:html][:class] = "row row-cols-lg-auto g-3 align-items-center search-fields-filter"
+      options[:wrapper] = options[:wrapper] || :inline_form
+  
+      options[:wrapper_mappings] = {
+        boolean: :inline_boolean,
+        check_boxes: :vertical_collection,
+        radio_buttons: :vertical_collection,
+        date: :inline_element,
+        select: :inline_select
+      }
+
+      simple_form_for(record, options, &block)
     end
   
     def fields_table_for(collection, options = {}, &block); end
@@ -212,6 +236,8 @@ module CustomTable
         content_tag(:i, "", class: "bi bi-gear")
       end
     end
+
+
 
   end
 end
