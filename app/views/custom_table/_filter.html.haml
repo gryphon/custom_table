@@ -90,12 +90,7 @@
       .btn-group
         = f.button :submit, :class => "btn-sm btn-primary", value: t("search")
         - if user_signed_in? && current_user_has_customizable_fields_for?(search_model) && !local_assigns[:hide_customization] && !local_assigns[:fields] && !(profile_path rescue nil).nil?
-          - field_key = search_model.model_name
-          - field_key += "-#{representation}" if !representation.nil?
-          - cls = local_assigns[:large].nil? ? "btn-sm" : ""
-          = link_to "#customize-items-#{field_key}", "title": t('custom_table.customize_table'), "data-bs-target"=>"#customize-items-#{field_key}", "data-bs-toggle"=>"modal", :class => "btn btn-outline-primary #{cls}" do
-            %i.bi.bi-gear
-      = yield f
+          = custom_table_settings_button search_model, representation
 
-= custom_table_settings_button search_model, representation
+      = yield f
 

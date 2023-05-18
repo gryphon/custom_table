@@ -144,11 +144,11 @@ module CustomTable
       custom_table_customizable_fields_for(model).count.positive?
     end
   
-    def custom_table **params
-  
+    def custom_table_data **params
+
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
       
-      render "custom_tables/table", params do
+      render "custom_table/table", params do
         yield
       end
     end
@@ -157,13 +157,13 @@ module CustomTable
   
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
       
-      render "custom_tables/table_row_data", params do
+      render "custom_table/table_row_data", params do
         yield
       end
     end
   
     def custom_table_filter **params, &block
-      render "custom_tables/filter", params do |f|
+      render "custom_table/filter", params do |f|
         yield if !block.nil?
       end
     end
@@ -196,17 +196,22 @@ module CustomTable
   
     def custom_table_download_button collection, **params
       params[:collection] = collection
-      render "custom_tables/download", params
+      render "custom_table/download", params
     end
   
-    def custom_table_settings_button search_model, representation=nil, **params
+    def custom_table_settings search_model, representation=nil, **params
       params[:search_model] = search_model
       params[:representation] = representation
   
-      render "custom_tables/settings", params
+      render "custom_table/settings", params
   
     end
   
+    def custom_table_settings_button search_model, representation=nil, size: "sm"
+      link_to custom_table.edit_setting_path(search_model.model_name, representation: representation), :class => "btn btn-outline-primary btn-#{size}", data: {"turbo-frame": "remote-modal"} do
+        content_tag(:i, "", class: "bi bi-gear")
+      end
+    end
 
   end
 end
