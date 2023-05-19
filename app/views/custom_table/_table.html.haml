@@ -25,7 +25,7 @@
             - sort_field = defs[:sort][:field].blank? ? field : defs[:sort][:field]
             - sort_order = defs[:sort][:default_order].blank? ? :asc : defs[:sort][:default_order]
             - if !@q.nil?
-              = sort_link @q, sort_field, default_order: sort_order do
+              = sort_link @q, sort_field, default_order: sort_order, id: "custom-table-sort-#{sort_field}-#{sort_order}" do
                 = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
           - else
             = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
