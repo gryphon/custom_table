@@ -1,4 +1,5 @@
 module OrdersHelper
+
   def order_icon
     content_tag(:i, "", class: "bi bi-airplane-engines")
   end
@@ -10,5 +11,6 @@ module OrdersHelper
     fields[:details] = {  }
     fields
   end
+
 
 end

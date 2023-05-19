@@ -1,18 +1,6 @@
 module CustomTable
   module ApplicationHelper
 
-    def delete_button(path, options = {})
-      button_to "Destroy", path, method: "delete"
-    end
-
-    def edit_button(path, options = {})
-      link_to "Edit", path
-    end  
-
-    def has_show_route?(item)
-      return (!url_for(controller: item.model_name.plural, action: "show", id: 1).nil?) rescue return false
-    end
-
     def custom_table_form_for(record, options = {}, &block)
       options[:url] = request.path if options[:url].nil?
       options[:method] = :get
@@ -154,6 +142,7 @@ module CustomTable
       model_fields.reject {|k,v| [:always, :export].include?(v[:appear]) }
     end
   
+    # Base definition for model
     def custom_table_fields_definition_for(model)
       helper_name = "#{model.model_name.singular}_custom_table_fields"
       if (! self.class.method_defined?(helper_name))

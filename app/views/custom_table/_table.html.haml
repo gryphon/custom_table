@@ -60,7 +60,7 @@
               - fields_totals[field] = 0 if fields_totals[field].nil?
               - fields_totals[field] += v.to_f
 
-            - if defs[:link_to_show] == true && has_show_route?(item)
+            - if defs[:link_to_show] == true && custom_table_has_show_route?(item)
               -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
               = link_to v, [namespace, item]
             - else
@@ -74,10 +74,10 @@
             - elsif self.class.method_defined?("#{model_name}_custom_table_actions")
               = self.send("#{model_name}_custom_table_actions", item)
             - if local_assigns[:skip_default_actions].nil?
-              - if (!has_show_route?(item) || local_assigns[:force_edit_button]) && can?(:update, item)
-                = edit_button [:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}"
+              - if (!custom_table_has_show_route?(item) || local_assigns[:force_edit_button]) && can?(:update, item)
+                = custom_table_edit_button [:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}"
               - if can? :destroy, item
-                = delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}"
+                = custom_table_delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}"
 
     - if local_assigns.has_key?(:extra) && !extra.nil?
       - extra.each do |er|

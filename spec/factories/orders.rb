@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :order do
-    code { "MyString" }
-    name { "MyString" }
-    details { "MyString" }
+    sequence(:code) { |n| "ORDERCODE#{n}" }
+    sequence(:name) { |n| "ORDERNAME#{n}" }
+    sequence(:details) { |n| "ORDERDETAILS#{n}" }
   end
 end

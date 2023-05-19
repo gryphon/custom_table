@@ -2,7 +2,7 @@ global_model_name = collection.model.model_name.singular
 
 sheet.add_row []
 
-fields = custom_table_fields_for(collection.model) 
+fields = custom_table_fields_definition_for(collection.model) 
 
 unless local_assigns[:fields].nil?
   fields = fields.select { |k, _v| local_assigns[:fields].include?(k) }
@@ -33,7 +33,7 @@ if defined?(extra_head)
 end
 
 sheet.add_row(head, style: head_style)
-collection.each do |item|
+collection.except(:limit, :offset).each do |item|
   row_def = []
   row = []
   style_def = []
