@@ -146,7 +146,7 @@ module CustomTable
     def custom_table_fields_definition_for(model)
       helper_name = "#{model.model_name.singular}_custom_table_fields"
       if (! self.class.method_defined?(helper_name))
-        raise "#{helper_name} helper is not defined so we do not know how to render custom_table"
+        raise "#{helper_name} helper is not defined so we do not know how to render custom_table for #{model}"
       end
       return self.send("#{helper_name}").each{|x,y| y[:label] = model.human_attribute_name(x) if y[:label].nil? }
     end

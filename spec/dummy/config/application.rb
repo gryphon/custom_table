@@ -18,6 +18,7 @@ require "ransack"
 require "kaminari"
 require "haml-rails"
 require "simple_form"
+require "turbo-rails"
 # require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
@@ -30,7 +31,7 @@ module Dummy
     config.load_defaults Rails::VERSION::STRING.to_f
 
     # For compatibility with applications that use this config
-    config.action_controller.include_all_helpers = false
+    config.action_controller.include_all_helpers = true
 
     # Configuration for the application, engines, and railties goes here.
     #

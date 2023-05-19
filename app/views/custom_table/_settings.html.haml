@@ -18,7 +18,7 @@
 
           %p= t("custom_table.customize_table_description")
 
-          = vertical_form_for current_user, url: custom_table.setting_path(id: search_model.model_name) do |f|
+          = simple_form_for current_user, url: custom_table.setting_path(id: search_model.model_name) do |f|
 
             = f.hidden_field "model", value: search_model.model_name
             = f.hidden_field "representation", value: representation
