@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
 
-  load_and_authorize_resource :order, find_by: :code
+  load_and_authorize_resource :order
 
   # TIP: Remove show action from router and you will get editing form inline automatically
 
@@ -8,6 +8,12 @@ class OrdersController < ApplicationController
   def index
     @orders = custom_table(@orders)
   end
+
+  # GET /orders
+  def another
+    @orders = custom_table(@orders, "another")
+  end
+
 
   # GET /orders/1
   def show

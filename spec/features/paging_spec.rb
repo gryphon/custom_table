@@ -39,6 +39,20 @@ feature "table display" do
 
     end
 
+    describe "simpliest case" do
+
+      it "saves per page" do
+
+        visit another_orders_path
+
+        expect(page.body).to match /#{orders[0].code}.*#{orders[1].code}/m
+  
+        click_on("50")
+
+        expect(@user.reload.custom_table["Order-another"][:per_page]).to eq(50)
+
+      end
+    end
 
   end
 

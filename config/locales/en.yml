@@ -5,4 +5,7 @@ en:
     customization_not_allowed: Customization of %{model} table is not allowed
     customization_saved: Table columns customization saved!
     cannot_save_customization: Cannot save customization
+    save_settings: Save Settings
+    reset_settings: Reset to default
+    are_you_sure: Are you sure?
 

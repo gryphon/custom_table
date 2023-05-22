@@ -64,6 +64,39 @@ feature "table display" do
     end
 
 
+
+    describe "representation" do
+
+      it "shows list of orders" do
+
+        @user.save_custom_table_settings(Order, "another", fields: {name: true})
+
+        visit another_orders_path
+
+        expect(page).to have_content orders[0].code # Always visible
+        expect(page).to have_content orders[0].name
+        expect(page).to_not have_content orders[0].details # Excluded by default
+
+      end
+
+      it "shows correct order of fields" do
+
+        @user.save_custom_table_settings(Order, "another", fields: {details: true, name: true, code: true})
+
+        visit another_orders_path
+
+        expect(page.body).to match /#{orders[0].details}.*#{orders[0].name}.*#{orders[0].code}/m
+
+        visit orders_path
+
+        # Excluded in defailt representation by default
+        expect(page.body).not_to match have_content orders[0].details
+
+      end
+      
+    end
+
+
   end
 
 end

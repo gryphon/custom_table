@@ -60,6 +60,37 @@ feature "settings display" do
 
     end
 
+    describe "with representation" do
+
+      it "shows user settings" do
+
+        @user.save_custom_table_settings(Order, "another", fields: {details: false, name: false})
+
+        visit custom_table.edit_setting_path("Order", representation: "another")
+
+        expect(find_field("user[fields][name]").checked?).to eq false
+
+      end
+
+    end
+
+    describe "reset" do
+
+      it "resets user settings" do
+
+        @user.save_custom_table_settings(Order, fields: {details: false, name: false})
+
+        visit custom_table.edit_setting_path("Order")
+
+        click_on "Reset to default"
+
+        expect(@user.reload.custom_table).to eq({})
+
+      end
+
+    end
+
+
   end
 
 end

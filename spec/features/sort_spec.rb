@@ -12,7 +12,7 @@ feature "table display" do
 
       expect(page.body).to match /#{orders[0].code}.*#{orders[1].code}/m
 
-      click_on("custom-table-sort-code-desc")
+      find("[data-sort=custom-table-sort-code-desc]").click
 
       expect(page.body).to match /#{orders[1].code}.*#{orders[0].code}/m
 
@@ -35,8 +35,8 @@ feature "table display" do
 
         expect(page.body).to match /#{orders[0].code}.*#{orders[1].code}/m
   
-        click_on("custom-table-sort-code-desc")
- 
+        find("[data-sort=custom-table-sort-code-desc]").click
+
         expect(@user.reload.custom_table["Order"][:sorts]).to eq("code desc")
 
       end
@@ -53,6 +53,21 @@ feature "table display" do
 
     end
 
+    describe "representation" do
+
+      it "saves sorting direstion" do
+
+        visit another_orders_path
+
+        expect(page.body).to match /#{orders[0].code}.*#{orders[1].code}/m
+  
+        find("[data-sort=custom-table-sort-code-desc]").click
+
+        expect(@user.reload.custom_table["Order-another"][:sorts]).to eq("code desc")
+
+      end
+
+    end
 
   end
 

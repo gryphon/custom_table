@@ -23,8 +23,8 @@ module CustomTableConcern
     collection = collection.page(params[:page]).per(per_page) if format_web && paginate
 
     if !current_user.nil?
-      current_user.save_custom_table_settings(collection.model, per_page: params[:per]) if !params[:per].nil? && paginate
-      current_user.save_custom_table_settings(collection.model, sorts: "#{@q.sorts[0].name} #{@q.sorts[0].dir}") if !params[:q].nil? && !params[:q][:s].nil? && !@q.nil? && !@q.sorts[0].nil? && !@q.sorts[0].name.nil?
+      current_user.save_custom_table_settings(collection.model, representation, per_page: params[:per]) if !params[:per].nil? && paginate
+      current_user.save_custom_table_settings(collection.model, representation, sorts: "#{@q.sorts[0].name} #{@q.sorts[0].dir}") if !params[:q].nil? && !params[:q][:s].nil? && !@q.nil? && !@q.sorts[0].nil? && !@q.sorts[0].name.nil?
     end
 
     return collection

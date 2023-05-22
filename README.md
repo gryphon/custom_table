@@ -6,6 +6,14 @@ Provides powerful set of functionality for showing tables of data:
 * Customize visible fields for each user
 * Exporting table to XLSX
 
+## Setup
+
+* Generate base helpers
+* Add CustomTable engine routes
+* Add concern to controllers
+* Add concern to User model and user ```custom_table``` field
+* Declare your first model
+
 ## Declaring fields
 
 The most important part of using this gem is to correctly declare fields available for showing in table.
@@ -41,7 +49,9 @@ Use attribute name as key if possbile. Table will try to get most of options aut
 
 ## Controller setup
 
-Make sure you are using Ransack and Kaminari in your index just as recommended in their documentation:
+Add ```CustomTableConcern``` to your controller to get easy index page solution.
+
+This gem provides custom_table method for your controller which does Ransack search and Kaminari pagination for you:
 
     def index
       @q = @vegetables.ransack(params[:q])
@@ -51,10 +61,22 @@ Make sure you are using Ransack and Kaminari in your index just as recommended i
       @vegetables = @vegetables.page(params[:page]).per(params[:per] || 25)
     end
 
+Is equivalent to:
+
+    def index
+      @vegetables = custom_table(@vegetables)
+    end
+
+Optional parameters are:
+
+* ```default_sorts``` - ```string``` sorting order if user not selected it (default to ```created_at desc```)
+* ```pagination``` - ```boolean``` if pagination is enabled (default to ```true```)
+* ```default_query``` - default ransack ```q``` object. Default is empty 
+
 ## Rendering tables
 
 Invoke this in your index to display table:
-```custom_table collection: @vegetables```
+```custom_table_data collection: @vegetables```
 
 Options available are:
 
@@ -84,3 +106,28 @@ You can declare fields which your model doesn't have. In this case table can't r
 * ```{singular_model_name}_#{field}``` best choise for most projects
 * ```{singular_model_name}_#{field}_raw``` use this to produce non-decorated raw data which can be used in tables
 
+## Displaying custom actions
+
+
+
+## Customizing user columns
+
+Add CustomTable as engine to your routes:
+
+And ```custom_table``` attribute as text to your model
+
+Search Settings button will show up automatically if you have at least one customizable field.
+
+You can also use settings button separatelly. It uses Rails turbo and you need to declare ```turbo-modal``` Turbo Tag within your HTML body.
+
+## Representations
+
+For each table you can declare additional representations (set of parameters to be saved to user customization).
+
+Important to note that you need to explicitly set list of available representations. Declare the following helper function:
+
+```{singular_model_name}_custom_table_fields```
+
+Which returns the array of available representation.
+
+Then just pass representation to filter and data helpers.

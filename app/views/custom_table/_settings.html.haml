@@ -1,5 +1,5 @@
 - representation = nil if !defined?("representation")
-- field_key = search_model.model_name
+- field_key = search_model.model_name.to_s
 - field_key += "-#{representation}" if !representation.nil?
 - cls = local_assigns[:large].nil? ? "btn-sm" : ""
 
@@ -47,4 +47,5 @@
               -#       = sf.input "fields", :as => :check_boxes, wrapper: :custom_boolean_switch, :collection => items[(items.length/2+1)..], :label_text => false, label: false, checked: checkeds
 
             .mt-2
-              = f.button :submit, class: "btn-success", value: t("save")
+              = f.button :submit, class: "btn-success", value: t("custom_table.save_settings")
+              = link_to t("custom_table.reset_settings"), custom_table.setting_path(id: search_model.model_name, representation: representation), data: {"turbo-method": "delete", "turbo-confirm": t("custom_table.are_you_sure")}, class: "btn btn-outline-secondary"

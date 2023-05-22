@@ -2,8 +2,8 @@
 
   .card-body.bg-light
 
-    - url = nil if !defined?("url")
-    - representation = nil if !defined?("representation")
+    - url = local_assigns[:url].presence
+    - representation = local_assigns[:representation].presence
 
     - a = {}
 

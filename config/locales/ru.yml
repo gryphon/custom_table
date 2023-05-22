@@ -5,3 +5,7 @@ ru:
     customization_not_allowed: Настройка таблицы %{model} не предусмотрена
     customization_saved: Настройки таблицы сохранены!
     cannot_save_customization: Ошибка при сохранении настроек таблицы
+    save_settings: Сохранить настройки
+    reset_settings: Сбросить настройки
+    are_you_sure: Вы уверены?
+

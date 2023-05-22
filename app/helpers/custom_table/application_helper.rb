@@ -157,8 +157,10 @@ module CustomTable
       custom_table_customizable_fields_for(model).count.positive?
     end
   
-    def custom_table_data **params
+    def custom_table_data collection, representation=nil, **params
 
+      params[:collection] = collection
+      params[:representation] = representation
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
       
       render "custom_table/table", params do
@@ -166,8 +168,10 @@ module CustomTable
       end
     end
   
-    def custom_table_row_data **params
+    def custom_table_row_data collection, representation=nil **params
   
+      params[:collection] = search_model
+      params[:representation] = representation
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
       
       render "custom_table/table_row_data", params do
@@ -175,7 +179,9 @@ module CustomTable
       end
     end
   
-    def custom_table_filter **params, &block
+    def custom_table_filter search_model, representation=nil, **params, &block
+      params[:search_model] = search_model
+      params[:representation] = representation
       render "custom_table/filter", params do |f|
         yield if !block.nil?
       end
@@ -226,7 +232,11 @@ module CustomTable
       end
     end
 
-
+    def custom_table_representations_for model
+      helper_name = "#{model.model_name.singular}_custom_table_representations"
+      return self.send(helper_name) if self.class.method_defined?(helper_name)
+      return []
+    end
 
   end
 end
