@@ -10,6 +10,7 @@ PATH
       rails (~> 7.0)
       ransack (~> 4.0)
       simple_form
+      sprockets-rails
       turbo-rails
 
 GEM

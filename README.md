@@ -11,6 +11,7 @@ Provides powerful set of functionality for showing tables of data:
 * Generate base helpers
 * Add CustomTable engine routes
 * Add concern to controllers
+* Add CSS import to your application.css: ```@import 'custom_table/table.css';```
 * Add concern to User model and user ```custom_table``` field
 * Declare your first model
 
