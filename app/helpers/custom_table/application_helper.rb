@@ -104,7 +104,16 @@ module CustomTable
   
       if !user_customization.nil?
         # Add new fields at the top to user customization if not present
-        model_fields.each {|f, v| user_customization = {"#{f.to_s}": true}.merge(user_customization) if user_customization[f].nil? }
+        model_fields.each do |f, v| 
+          next if !user_customization[f].nil? 
+          selected = [:always, :default].include?(v[:appear])
+          new_field = {"#{f.to_s}": selected}
+          if selected
+            user_customization = new_field.merge(user_customization)
+          else
+            user_customization = user_customization.merge(new_field)
+          end
+        end
         return user_customization.collect{|f,v| [f, {selected: v}.merge(model_fields[f])]}.to_h
       else
         # Use default model settings
@@ -168,9 +177,9 @@ module CustomTable
       end
     end
   
-    def custom_table_row_data collection, representation=nil **params
+    def custom_table_row_data item, representation = nil, **params
   
-      params[:collection] = search_model
+      params[:item] = item
       params[:representation] = representation
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
       
