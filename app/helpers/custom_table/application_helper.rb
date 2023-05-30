@@ -1,6 +1,13 @@
 module CustomTable
   module ApplicationHelper
 
+    def boolean_icon(value, true_value = nil, false_value = nil)
+      capture do
+        concat content_tag(:i, "", class: (value ? "bi bi-check-lg text-success" : "bi bi-x-lg text-danger"), data: {raw: value})
+        concat content_tag(:span, value ? true_value : false_value, class: "ms-1") unless true_value.nil?
+      end
+    end  
+
     def custom_table_form_for(record, options = {}, &block)
       options[:url] = request.path if options[:url].nil?
       options[:method] = :get
@@ -27,12 +34,12 @@ module CustomTable
     # Helper {singular_model_name}_{field}
     # Helper {singular_model_name}_{field}_raw
     # Attribute of model
-    def field_value_for item, field, defs
+    def field_value_for item, field, defs=nil
   
       model_name = item.model_name.singular
       global_model_name = item.class.model_name.singular
   
-      if !defs[:helper].nil?
+      if !defs.nil? && !defs[:helper].nil?
         return self.send(defs[:helper], item, field)
       elsif self.class.method_defined?("#{model_name}_#{field}_field")
         return self.send("#{model_name}_#{field}_field", item)
@@ -42,19 +49,25 @@ module CustomTable
         return self.send("#{model_name}_#{field}_raw", item)
       elsif self.class.method_defined?("#{global_model_name}_#{field}")
         return self.send("#{global_model_name}_#{field}", item)
-      elsif defs[:amount]
+      elsif !defs.nil? && defs[:amount]
         if !item.class.columns_hash[field.to_s].nil? && item.class.columns_hash[field.to_s].type == :integer
-          return tfc(item.send(field), 0) rescue ""
+          return amount_value(item.send(field), 0) rescue ""
         else
-          return fc(item.send(field)) rescue ""
+          return amount(item.send(field)) rescue ""
         end
       else
-        if item.class.columns_hash[field.to_s] && item.class.columns_hash[field.to_s].type == :boolean
+        if item.class.reflect_on_association(field)
+          return not_set if (item.send(field) rescue nil).nil?
+          return render(item.send(field)) rescue item.send(field).to_s rescue ""
+        elsif item.class.columns_hash[field.to_s] && item.class.columns_hash[field.to_s].type == :boolean
           return boolean_icon(item.send(field)) rescue ""
         elsif item.class.columns_hash[field.to_s] && [:date, :datetime].include?(item.class.columns_hash[field.to_s].type)
-          return l(item.send(field)) rescue ""
+          return (item.send(field).blank? ? not_set : l(item.send(field))) rescue ""
+        elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)
+          return not_set if (item.send(field) rescue nil).nil?
+          return amount(item.send(field)) rescue ""
         else
-          return item.send(field) rescue ""
+          return (item.send(field).presence || not_set).to_s rescue ""
         end
       end
       
@@ -160,6 +173,19 @@ module CustomTable
       return self.send("#{helper_name}").each{|x,y| y[:label] = model.human_attribute_name(x) if y[:label].nil? }
     end
   
+    # Base definition for model
+    def custom_table_fields_definition_for_field(model, field)
+      helper_name = "#{model.model_name.singular}_custom_table_fields"
+      if (! self.class.method_defined?(helper_name))
+        raise "#{helper_name} helper is not defined so we do not know how to render custom_table for #{model}"
+      end
+      defs = self.send("#{helper_name}")
+      return nil if defs[field].nil?
+      defs[:label] = model.human_attribute_name(field) if defs[:label].nil?
+      return defs
+    end
+  
+
     # Returns true if model can be customized by current user at least by one field
     def current_user_has_customizable_fields_for?(model)
       return false if current_user.nil?
@@ -195,31 +221,30 @@ module CustomTable
         yield if !block.nil?
       end
     end
-  
-  
+
     # Rounded
-    def rfc(c)
-      content_tag(:span, tfc(c, 0), "data-raw": (c.blank? ? nil : c.round))
+    def amount_round(c)
+      content_tag(:span, amount_value(c, 0), "data-raw": (c.blank? ? nil : c.round))
     end
   
     # Base
-    def fc(c)
-      content_tag(:span, tfc(c), "data-raw": (c.blank? ? nil : c.round(2)))
+    def amount(c)
+      content_tag(:span, amount_value(c), "data-raw": (c.blank? ? nil : c.round(2)))
     end
   
     # Abstract
-    def tfc(c, p = 2)
+    def amount_value(c, p = 2)
       number_to_currency(c, precision: p, locale: :en, unit: "")
     end
   
     # Colored
-    def cfc(c)
-      content_tag(:span, fc(c), class: ["amount", (c.to_f >= 0 ? "positive" : "negative")])
+    def amount_color(c)
+      content_tag(:span, amount(c), class: ["amount", (c.to_f >= 0 ? "positive" : "negative")])
     end
   
     # Colored rounded
-    def crfc(c)
-      content_tag(:span, rfc(c), class: ["amount", (c.to_f >= 0 ? "positive" : "negative")])
+    def amount_round_color(c)
+      content_tag(:span, amount_round(c), class: ["amount", (c.to_f >= 0 ? "positive" : "negative")])
     end
   
     def custom_table_download_button collection, **params

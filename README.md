@@ -44,6 +44,7 @@ Use attribute name as key if possbile. Table will try to get most of options aut
 * ```appear``` controls visibility of the field. Default value is hidden if not specially selected
 * * ```default``` will appear by default
 * * ```always``` will always appear
+* * ```export``` will appear only in XLSX export
 * ```link_to_show``` if true, this fields will have link to show page of item
 * ```sort``` controls sorting ability for the fields (disabled by default). Use ```true``` or ```{default_order: :asc|:desc}```
 * ```amount``` if true, applies number-specific formatting to cells (right align)
@@ -107,6 +108,13 @@ You can declare fields which your model doesn't have. In this case table can't r
 * ```{singular_model_name}_#{field}``` best choise for most projects
 * ```{singular_model_name}_#{field}_raw``` use this to produce non-decorated raw data which can be used in tables
 
+If helper is not accessible table will try to render the following:
+
+* Association via ```to_s``` method
+* Numeric attribute via ```amount``` helper which formats number
+* Raw text attributes
+* Boolean attribute via ```boolean_icon``` helper. Uses bootstrap icons and can be overriden
+
 ## Displaying custom actions
 
 
@@ -132,3 +140,48 @@ Important to note that you need to explicitly set list of available representati
 Which returns the array of available representation.
 
 Then just pass representation to filter and data helpers.
+
+## Table Stimulus helper
+
+
+
+
+## Downloading data as XLSX table
+
+This gem also provide partial for exporting all available columns as XLSX file via CAXLSX gem:
+
+    wb = xlsx_package.workbook
+    wb.add_worksheet(name: "Aircrafts") do |sheet|
+      render 'custom_table/table', sheet: sheet, collection: @aircrafts.except(:limit, :offset)
+    end
+
+## Using fieldset helper for show actions
+
+You can use the same fields declared for table within show views.
+This also can be used without any table fields declaration and setup.
+
+The simpliest case here is (haml):
+
+    = fieldset @instance do |fs|
+      = fs.field :name
+
+It will produce bootstrap fieldset formatting as well as value logic from tables.
+
+Fieldset formatting can be overriden via views (custom_table/_fieldset and custom_table/field)
+
+By default fieldset is integrated with ```turbo_editable``` gem and each field is wrapped with it. You can disable it by passing ```editable: false``` as param to fieldset of field.
+
+Options available are:
+
+* ```label``` - if it cannot be received via field definition 
+* ```editable_params``` - hash of params to be passed to editable
+
+All options from fieldset are proxied to field. So you can declare it once if suitable.
+
+You can declare how each field is displayed. Just add it as block within field:
+
+    = fieldset @instance do |fs|
+      = fs.field :name do
+        = @instance.name.upcase
+
+

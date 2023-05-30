@@ -104,11 +104,11 @@
               - if totals.include?(field)
                 - if totals[field].nil?
                   - if !model_class.columns_hash[field.to_s].nil?
-                    = cfc collection.except(:limit, :offset, :order).sum(field)
+                    = amount_color collection.except(:limit, :offset, :order).sum(field)
                   - else
-                    = cfc fields_totals[field]
+                    = amount_color fields_totals[field]
                 - else
-                  = cfc totals[field]
+                  = amount_color totals[field]
           %th.text-end
 
 - if collection.respond_to? :total_pages

@@ -3,6 +3,7 @@ module CustomTableConcern
 
   included do
     helper CustomTable::ApplicationHelper
+    helper CustomTable::FieldsetHelper
   end
 
   class_methods do 
