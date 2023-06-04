@@ -61,6 +61,8 @@ module CustomTable
           return render(item.send(field)) rescue item.send(field).to_s rescue ""
         elsif item.class.columns_hash[field.to_s] && item.class.columns_hash[field.to_s].type == :boolean
           return boolean_icon(item.send(field)) rescue ""
+        elsif item.class.defined_enums.has_key?(field.to_s)
+          return (item.send(field).presence || not_set).to_s rescue ""
         elsif item.class.columns_hash[field.to_s] && [:date, :datetime].include?(item.class.columns_hash[field.to_s].type)
           return (item.send(field).blank? ? not_set : l(item.send(field))) rescue ""
         elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)

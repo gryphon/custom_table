@@ -10,9 +10,12 @@
 
 - fields = fields.except(*local_assigns[:skip_fields]) if !local_assigns[:skip_fields].nil?
 
-%table{class: ["search-fields", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table"}}
+%table{class: ["search-fields", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table toggle"}}
   %thead.sticky
     %tr
+      - if local_assigns[:with_select]
+        %th.checkbox-col
+          = check_box_tag "check-all", "", true, data: {"toggle-target": "toggler", "action": "toggle#toggle"}
       - if local_assigns[:with_index]
         %th= "#"
       - fields.each do |field, defs|
@@ -40,13 +43,19 @@
 
     - collection.each do |item|
 
+      - position+=1
+
       - model_name = item.model_name.singular # Allows to show different class models in one table!
       -# = render partial: "custom_tables/table_row", locals: local_assigns.merge(item: item, position: position, fields: fields, fields_totals: fields_totals)
       %tr{id: dom_id(item, "row"), :class => (self.send("#{model_name}_row_class", item) rescue "")}
 
+        - if local_assigns[:with_select]
+          %td.checkbox-col
+            = self.send(local_assigns[:with_select], item, position)
+
         - if local_assigns[:with_index]
           %td
-            = position+=1
+            = position
 
         - fields.each do |field, defs|
           - next if defs[:table] == false
