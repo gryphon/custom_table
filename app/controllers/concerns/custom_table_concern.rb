@@ -14,6 +14,7 @@ module CustomTableConcern
   end
 
   def custom_table collection, representation = nil, paginate: true, default_sorts: "created_at asc", default_query: nil
+
     @q = collection.ransack(params[:q])
 
     customization = helpers.custom_table_user_customization_for(collection.model, representation)
