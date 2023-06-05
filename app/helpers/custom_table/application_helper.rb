@@ -40,15 +40,15 @@ module CustomTable
       global_model_name = item.class.model_name.singular
   
       if !defs.nil? && !defs[:helper].nil?
-        return self.send(defs[:helper], item, field)
+        return self.send(defs[:helper], item, field).presence || not_set
       elsif self.class.method_defined?("#{model_name}_#{field}_field")
-        return self.send("#{model_name}_#{field}_field", item)
+        return self.send("#{model_name}_#{field}_field", item).presence || not_set
       elsif self.class.method_defined?("#{model_name}_#{field}")
-        return self.send("#{model_name}_#{field}", item)
+        return self.send("#{model_name}_#{field}", item).presence || not_set
       elsif self.class.method_defined?("#{model_name}_#{field}_raw")
-        return self.send("#{model_name}_#{field}_raw", item)
+        return self.send("#{model_name}_#{field}_raw", item).presence || not_set
       elsif self.class.method_defined?("#{global_model_name}_#{field}")
-        return self.send("#{global_model_name}_#{field}", item)
+        return self.send("#{global_model_name}_#{field}", item).presence || not_set
       elsif !defs.nil? && defs[:amount]
         if !item.class.columns_hash[field.to_s].nil? && item.class.columns_hash[field.to_s].type == :integer
           return amount_value(item.send(field), 0) rescue ""

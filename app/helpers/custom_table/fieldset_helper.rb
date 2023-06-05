@@ -14,12 +14,13 @@ module CustomTable
         @template.respond_to?(:editable)
       end
 
-      def field column, editable: true, **params, &block
+      def field column, **params, &block
 
         defs = custom_table_fields_definition_for_field(@object.class, column) rescue nil
 
         params = {} if params.nil?
         params = params.deep_merge(@params)
+        params[:editable] = true if params[:editable].nil?
 
         if params[:label].nil?
           if !defs.nil? && !defs[:label].blank?
@@ -34,7 +35,7 @@ module CustomTable
           @template.field params[:label], &block
         else
           @template.field params[:label] do
-            if editable && has_editable?
+            if params[:editable] && has_editable?
               params[:editable_params] = {} if params[:editable_params].nil?
               @template.editable @object, column, **params[:editable_params] do
                 @template.field_value_for(@object, column)
