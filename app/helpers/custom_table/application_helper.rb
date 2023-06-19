@@ -6,14 +6,14 @@ module CustomTable
         concat content_tag(:i, "", class: (value ? "bi bi-check-lg text-success" : "bi bi-x-lg text-danger"), data: {raw: value})
         concat content_tag(:span, value ? true_value : false_value, class: "ms-1") unless true_value.nil?
       end
-    end  
+    end
 
     def custom_table_form_for(record, options = {}, &block)
       options[:url] = request.path if options[:url].nil?
       options[:method] = :get
   
       options[:html] ||= {} 
-      options[:html][:class] = "row row-cols-lg-auto g-3 align-items-center search-fields-filter"
+      options[:html][:class] = "row row-cols-md-auto g-3 align-items-center search-fields-filter"
       options[:wrapper] = options[:wrapper] || :inline_form
   
       options[:wrapper_mappings] = {
@@ -34,13 +34,19 @@ module CustomTable
     # Helper {singular_model_name}_{field}
     # Helper {singular_model_name}_{field}_raw
     # Attribute of model
-    def field_value_for item, field, defs=nil
-  
+    def field_value_for item, field, definitions: nil, representation: nil
+ 
+      defs = definitions
+
       model_name = item.model_name.singular
       global_model_name = item.class.model_name.singular
   
       if !defs.nil? && !defs[:helper].nil?
         return self.send(defs[:helper], item, field).presence || not_set
+      elsif !representation.nil? && self.class.method_defined?("#{model_name}_#{representation}_#{field}_field")
+        return self.send("#{model_name}_#{representation}_#{field}_field", item).presence || not_set
+      elsif !representation.nil? && self.class.method_defined?("#{model_name}_#{representation}_#{field}")
+        return self.send("#{model_name}_#{representation}_#{field}", item).presence || not_set
       elsif self.class.method_defined?("#{model_name}_#{field}_field")
         return self.send("#{model_name}_#{field}_field", item).presence || not_set
       elsif self.class.method_defined?("#{model_name}_#{field}")

@@ -11,6 +11,9 @@
         %h4#loginLabel.modal-title
           = t("custom_table.customize_table")+":"
           = search_model.model_name.human
+          - if !representation.nil?
+            %small= "(#{representation})"
+
         %button.btn-close(type="button" data-bs-dismiss="modal" aria-label="close")
       .modal-body
 

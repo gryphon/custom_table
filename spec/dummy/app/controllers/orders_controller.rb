@@ -7,13 +7,43 @@ class OrdersController < ApplicationController
   # GET /orders
   def index
     @orders = custom_table(@orders)
+    
+    respond_to do |format|
+      format.html
+      format.xlsx
+    end
+    
   end
 
-  # GET /orders
+  # GET /orders/another
   def another
     @orders = custom_table(@orders, "another")
   end
 
+  # GET /orders/actions_skip
+  def actions_skip
+    @orders = custom_table(@orders)
+  end
+
+  # GET /orders/skip_actions
+  def actions_skip
+    @orders = custom_table(@orders)
+  end
+
+  # GET /orders/skip_actions
+  def actions_custom
+    @orders = custom_table(@orders)
+  end
+
+  # GET /orders/skip_actions
+  def actions_skip_default
+    @orders = custom_table(@orders)
+  end
+
+  # GET /orders/skip_actions
+  def actions_representation
+    @orders = custom_table(@orders)
+  end
 
   # GET /orders/1
   def show

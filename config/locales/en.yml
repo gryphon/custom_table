@@ -8,4 +8,6 @@ en:
     save_settings: Save Settings
     reset_settings: Reset to default
     are_you_sure: Are you sure?
-
+    date_from: from
+    date_to: to
+    clear_search: Clear search

@@ -6,9 +6,9 @@
   - next if defs[:table] == false
 
   = turbo_stream.update dom_id(item, field) do
-    - v = field_value_for(item, field, defs)
+    - v = field_value_for(item, field, definitions: defs)
 
-    - if defs[:link_to_show] == true && has_show_route?(item)
+    - if defs[:link_to_show] == true && custom_table_has_show_route?(item)
       -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
       = link_to v, [namespace, item]
     - else

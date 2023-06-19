@@ -48,6 +48,7 @@ Use attribute name as key if possbile. Table will try to get most of options aut
 * ```link_to_show``` if true, this fields will have link to show page of item
 * ```sort``` controls sorting ability for the fields (disabled by default). Use ```true``` or ```{default_order: :asc|:desc}```
 * ```amount``` if true, applies number-specific formatting to cells (right align)
+* ```helper``` helper name (will be used instead default, see below)
 
 ## Controller setup
 
@@ -104,16 +105,20 @@ Options:
 
 You can declare fields which your model doesn't have. In this case table can't render field value so you have to provide helpers for rendering the field. Table renderer will try to look for these helpers in prioritizing order:
 
-* ```{singular_model_name}_#{field}_field``` to avoid naming collisions
-* ```{singular_model_name}_#{field}``` best choise for most projects
-* ```{singular_model_name}_#{field}_raw``` use this to produce non-decorated raw data which can be used in tables
+* ```#{singular_model_name}_#{field}_field``` to avoid naming collisions
+* ```#{singular_model_name}_#{field}``` best choise for most projects
+* ```#{singular_model_name}_#{field}_raw``` use this to produce non-decorated raw data which can be used in tables
 
-If helper is not accessible table will try to render the following:
+If helper is not accessible table will try to render item via following methods:
 
 * Association via ```to_s``` method
 * Numeric attribute via ```amount``` helper which formats number
 * Raw text attributes
 * Boolean attribute via ```boolean_icon``` helper. Uses bootstrap icons and can be overriden
+
+If you use representation, following helper will have the priority over all options:
+* ```#{singular_model_name}_#{representation}_#{field}_field```
+* ```#{singular_model_name}_#{representation}_#{field}```
 
 ## Displaying custom actions
 
@@ -184,4 +189,7 @@ You can declare how each field is displayed. Just add it as block within field:
       = fs.field :name do
         = @instance.name.upcase
 
+## Development
+
+Running tests: rspec
 

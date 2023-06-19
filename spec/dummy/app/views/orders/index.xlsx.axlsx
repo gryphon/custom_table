@@ -1,0 +1,11 @@
+wb = xlsx_package.workbook
+wb.styles do |s|
+  head_style = s.add_style b: true, alignment: { horizontal: :left }
+
+  wb.add_worksheet(name: "Orders") do |sheet|
+    render partial: 'custom_table/table', locals: {
+      sheet: sheet, collection: @orders,
+      styles: s
+    }
+  end
+end

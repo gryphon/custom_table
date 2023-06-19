@@ -13,6 +13,9 @@ feature "table display" do
       expect(page).to have_content orders[0].code
       expect(page).to have_content orders[1].code
 
+      # Testing custom helper
+      expect(page).to have_content "FILTER#{orders[1].name}ED"
+
     end
 
   end
@@ -67,7 +70,19 @@ feature "table display" do
 
     describe "representation" do
 
-      it "shows list of orders" do
+      it "shows default list of orders" do
+
+        visit another_orders_path
+
+        expect(page).to have_content orders[0].code # Always visible
+        expect(page).to have_content orders[0].name
+        expect(page).to have_content "ANOT#{orders[0].priority}HER"
+        expect(page).to_not have_content orders[0].details # Excluded by default
+
+      end
+
+
+      it "shows customized list of orders" do
 
         @user.save_custom_table_settings(Order, "another", fields: {name: true})
 

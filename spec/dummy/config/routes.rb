@@ -4,6 +4,13 @@ Rails.application.routes.draw do
 
   resources :orders do
     get :another, on: :collection
+
+    get :actions_skip, on: :collection
+    get :actions_custom, on: :collection
+    get :actions_skip_default, on: :collection
+    get :actions_representation, on: :collection
+
+    get :row, on: :member
   end
   
 end

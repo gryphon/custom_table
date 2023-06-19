@@ -8,4 +8,6 @@ ru:
     save_settings: Сохранить настройки
     reset_settings: Сбросить настройки
     are_you_sure: Вы уверены?
-
+    date_from: от
+    date_to: до
+    clear_search: Очистить поиск

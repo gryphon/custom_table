@@ -12,7 +12,7 @@
       .d-none
         = f.input :s, as: :hidden, input_html: {value: params[:q].try(:[], :s)}
 
-      - fields = custom_table_fields_for(search_model, representation: representation, current_search: params[:q]) if local_assigns[:fields].nil?
+      - fields = custom_table_fields_for(search_model, representation: representation, current_search: params[:q], predefined_fields: local_assigns[:fields])# if local_assigns[:fields].nil?
 
       - fields.each do |key, defs|
 
@@ -30,7 +30,10 @@
 
           - if field[:type] == :text
 
-            = f.input field[:q], input_html: {class: "form-control-sm"}, required: false, label: false, placeholder: defs[:label]
+            - ih = {class: "form-control-sm"}
+            - ih = ih.merge(defs[:input_html]) if !defs[:input_html].nil?
+
+            = f.input field[:q], input_html: ih, required: false, label: false, placeholder: defs[:label]
 
           - if field[:type] == :boolean
 
@@ -71,8 +74,9 @@
 
             - collection = field[:collection]
             - collection = [search_model, key.to_s.pluralize] if collection.nil?
+            - coll = collection[0].send(collection[1]).keys.map { |w| [(collection[0].method_defined?(:human_enum_name) ? collection[0].human_enum_name(collection[1].to_s.singularize, w) : w), w] }
 
-            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => collection[0].send(collection[1]).keys.map { |w| [collection[0].human_enum_name(collection[1].to_s.singularize, w), w] }, include_blank: defs[:label]
+            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => coll, include_blank: defs[:label]
 
           - if field[:type] == :dates
             .col-12
@@ -91,6 +95,9 @@
         = f.button :submit, :class => "btn-sm btn-primary", value: t("search")
         - if user_signed_in? && current_user_has_customizable_fields_for?(search_model) && !local_assigns[:hide_customization] && !local_assigns[:fields] && !(profile_path rescue nil).nil?
           = custom_table_settings_button search_model, representation
+        - if params[:q].present?
+          = link_to url_for(params.permit!.except(:q)), class: "btn btn-sm btn-outline-danger", title: t("custom_table.clear_search") do
+            %i.bi.bi-slash-circle
 
       = yield f
 
