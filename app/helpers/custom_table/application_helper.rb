@@ -70,7 +70,7 @@ module CustomTable
         elsif item.class.defined_enums.has_key?(field.to_s)
           return (item.send(field).presence || not_set).to_s rescue ""
         elsif item.class.columns_hash[field.to_s] && [:date, :datetime].include?(item.class.columns_hash[field.to_s].type)
-          return (item.send(field).blank? ? not_set : l(item.send(field))) rescue ""
+          return (item.send(field).blank? ? not_set : l(item.send(field), format: :short)) rescue ""
         elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)
           return not_set if (item.send(field) rescue nil).nil?
           return amount(item.send(field)) rescue ""

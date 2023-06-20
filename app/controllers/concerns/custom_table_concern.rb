@@ -13,7 +13,7 @@ module CustomTableConcern
     !(request.format.xlsx? || request.format.csv?)
   end
 
-  def custom_table collection, representation = nil, paginate: true, default_sorts: "created_at asc", default_search: {}
+  def custom_table collection, representation = nil, paginate: true, default_sorts: "created_at desc", default_search: {}
 
     @q = collection.ransack(params[:q])
     @q = collection.ransack((params[:q] || {}).merge(default_search)) if @q.conditions.empty?
