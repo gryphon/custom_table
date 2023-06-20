@@ -1,0 +1,8 @@
+%h2
+  Order
+
+= fieldset @order do |fs|
+  = fs.field :code
+  = fs.field :name, label: "NAMECUSTOMLABEL"
+  = fs.field :details do
+    = "DEDE#{@order.details}TAILS"

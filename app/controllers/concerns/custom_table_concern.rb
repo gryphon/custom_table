@@ -13,9 +13,10 @@ module CustomTableConcern
     !(request.format.xlsx? || request.format.csv?)
   end
 
-  def custom_table collection, representation = nil, paginate: true, default_sorts: "created_at asc", default_query: nil
+  def custom_table collection, representation = nil, paginate: true, default_sorts: "created_at asc", default_search: {}
 
     @q = collection.ransack(params[:q])
+    @q = collection.ransack((params[:q] || {}).merge(default_search)) if @q.conditions.empty?
 
     customization = helpers.custom_table_user_customization_for(collection.model, representation)
     per_page = params[:per] || customization&.dig(:per_page).presence || 25

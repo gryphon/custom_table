@@ -92,10 +92,10 @@
                   %button.dropdown-item{type: "button", "data-action": "dates#clear"}= t("clear")
 
       .btn-group
-        = f.button :submit, :class => "btn-sm btn-primary", value: t("search")
+        = f.button :submit, t("search"), name: "", :class => "btn-sm btn-primary"
         - if user_signed_in? && current_user_has_customizable_fields_for?(search_model) && !local_assigns[:hide_customization] && !local_assigns[:fields] && !(profile_path rescue nil).nil?
           = custom_table_settings_button search_model, representation
-        - if params[:q].present?
+        - if params[:q].present? && !params[:q].except(:s).empty?
           = link_to url_for(params.permit!.except(:q)), class: "btn btn-sm btn-outline-danger", title: t("custom_table.clear_search") do
             %i.bi.bi-slash-circle
 
