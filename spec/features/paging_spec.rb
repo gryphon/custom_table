@@ -37,9 +37,20 @@ feature "table display" do
   
       end
 
+      it "disabled pagination" do
+
+        orders = FactoryBot.create_list(:order, 200)
+
+        visit no_paginate_orders_path
+
+        expect(page).to have_content(orders[199].code)
+  
+      end
+
+
     end
 
-    describe "simpliest case" do
+    describe "with representation" do
 
       it "saves per page" do
 

@@ -18,6 +18,39 @@ feature "table display" do
 
     end
 
+    it "explicitly set list of fields" do
+
+      visit fields_orders_path
+
+      expect(page).to have_content orders[0].details
+      expect(page).not_to have_content orders[0].code
+
+
+    end
+
+    it "skip fields" do
+
+      visit skip_fields_orders_path
+
+      expect(page).to have_content orders[0].name
+      expect(page).not_to have_content orders[0].code
+
+
+    end
+
+    it "default search" do
+
+      order = FactoryBot.create(:order, code: "KEKDS")
+
+      visit default_search_orders_path
+
+      expect(page).to have_content order.code
+      expect(page).not_to have_content orders[0].code
+
+
+    end
+
+
   end
 
   describe "authenticated" do

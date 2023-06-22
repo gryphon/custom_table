@@ -45,6 +45,22 @@ class OrdersController < ApplicationController
     @orders = custom_table(@orders)
   end
 
+  def default_search
+    @orders = custom_table(@orders, default_search: {code_eq: "KEKDS"})
+  end
+
+  def fields
+    @orders = custom_table(@orders)
+  end
+
+  def skip_fields
+    @orders = custom_table(@orders)
+  end
+
+  def no_paginate
+    @orders = custom_table(@orders, paginate: false)
+  end
+
   # GET /orders/1
   def show
   end

@@ -10,6 +10,12 @@ Rails.application.routes.draw do
     get :actions_skip_default, on: :collection
     get :actions_representation, on: :collection
 
+    get :default_search, on: :collection
+    get :fields, on: :collection
+    get :skip_fields, on: :collection
+
+    get :no_paginate, on: :collection
+
     get :row, on: :member
   end
   
