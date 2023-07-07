@@ -20,6 +20,8 @@ module OrdersHelper
 
     fields[:details] = {  }
 
+    fields[:user] = { search: {q: :user_id_eq, type: :select, collection: User.all}, appear: :default }
+
     fields
   end
 

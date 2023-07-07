@@ -47,7 +47,8 @@
 
       - model_name = item.model_name.singular # Allows to show different class models in one table!
       -# = render partial: "custom_tables/table_row", locals: local_assigns.merge(item: item, position: position, fields: fields, fields_totals: fields_totals)
-      %tr{id: dom_id(item, "row"), :class => (self.send("#{model_name}_row_class", item) rescue "")}
+      - row_class = local_assigns[:row_class] || "#{model_name}_row_class"
+      %tr{id: dom_id(item, "row"), :class => (self.send(row_class, item) rescue "")}
 
         - if local_assigns[:with_select]
           %td.checkbox-col
