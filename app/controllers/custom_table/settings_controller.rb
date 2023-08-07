@@ -22,7 +22,7 @@ module CustomTable
       model = p[:model].constantize
       representation = p[:representation].presence
 
-      defs = helpers.custom_table_fields_definition_for(model)
+      defs = helpers.custom_table_fields_definition_for(model, representation)
       representations = helpers.custom_table_representations_for(model)
 
       if !representation.nil? && !representations.include?(representation)

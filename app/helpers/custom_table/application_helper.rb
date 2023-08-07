@@ -87,7 +87,7 @@ module CustomTable
       fields = []
       current_search = {} if current_search.nil?
   
-      model_fields = custom_table_fields_definition_for(model)
+      model_fields = custom_table_fields_definition_for(model, representation)
   
       if (!predefined_fields.nil?)
         return model_fields.select {|k,v| predefined_fields.include?(k) }
@@ -116,7 +116,7 @@ module CustomTable
     # Returns list of fields for customization form
     def custom_table_fields_settings_for(model, representation: nil)
   
-      model_fields = custom_table_fields_definition_for(model)
+      model_fields = custom_table_fields_definition_for(model, representation)
   
       fields_key = model.model_name.to_s
       fields_key += "-#{representation}" unless representation.nil?
@@ -148,7 +148,7 @@ module CustomTable
     # Prepares object of user fields customization
     def custom_table_user_customized_fields_for(model, representation = nil)
       fields_key = custom_table_fields_key(model, representation)
-      defs = custom_table_fields_definition_for(model)
+      defs = custom_table_fields_definition_for(model, representation)
       return nil if current_user.nil? || current_user.custom_table.nil? || current_user.custom_table.dig(fields_key, :fields).nil?
       return current_user.custom_table.dig(fields_key, :fields).symbolize_keys.reject{|k,v| defs[k.to_sym].nil?}
   
@@ -167,27 +167,38 @@ module CustomTable
       return fields_key
     end
   
-    def custom_table_customizable_fields_for(model)
-      model_fields = custom_table_fields_definition_for(model)
+    def custom_table_customizable_fields_for(model, representation = nil)
+      model_fields = custom_table_fields_definition_for(model, representation)
       model_fields.reject {|k,v| [:always, :export].include?(v[:appear]) }
     end
   
     # Base definition for model
-    def custom_table_fields_definition_for(model)
+    def custom_table_fields_definition_for(model, representation = nil)
       helper_name = "#{model.model_name.singular}_custom_table_fields"
       if (! self.class.method_defined?(helper_name))
         raise "#{helper_name} helper is not defined so we do not know how to render custom_table for #{model}"
       end
-      return self.send("#{helper_name}").each{|x,y| y[:label] = model.human_attribute_name(x) if y[:label].nil? }
+
+      if representation.nil? || method(helper_name).parameters.empty?
+        defs = self.send("#{helper_name}")
+      else
+        defs = self.send("#{helper_name}", representation)
+      end
+
+      return defs.each{|x,y| y[:label] = model.human_attribute_name(x) if y[:label].nil? }
     end
   
     # Base definition for model
-    def custom_table_fields_definition_for_field(model, field)
+    def custom_table_fields_definition_for_field(model, field, representation = nil)
       helper_name = "#{model.model_name.singular}_custom_table_fields"
       if (! self.class.method_defined?(helper_name))
         raise "#{helper_name} helper is not defined so we do not know how to render custom_table for #{model}"
       end
-      defs = self.send("#{helper_name}")
+      if representation.nil? || method(helper_name).parameters.empty?
+        defs = self.send("#{helper_name}")
+      else
+        defs = self.send("#{helper_name}", representation)
+      end
       return nil if defs[field].nil?
       defs[:label] = model.human_attribute_name(field) if defs[:label].nil?
       return defs
@@ -195,9 +206,9 @@ module CustomTable
   
 
     # Returns true if model can be customized by current user at least by one field
-    def current_user_has_customizable_fields_for?(model)
+    def current_user_has_customizable_fields_for?(model, representation=nil)
       return false if current_user.nil?
-      custom_table_customizable_fields_for(model).count.positive?
+      custom_table_customizable_fields_for(model, representation).count.positive?
     end
   
     def custom_table_data collection, representation=nil, **params
@@ -223,6 +234,7 @@ module CustomTable
     end
   
     def custom_table_filter search_model, representation=nil, **params, &block
+
       params[:search_model] = search_model
       params[:representation] = representation
       render "custom_table/filter", params do |f|
@@ -261,6 +273,7 @@ module CustomTable
     end
   
     def custom_table_settings search_model, representation=nil, **params
+
       params[:search_model] = search_model
       params[:representation] = representation
   
