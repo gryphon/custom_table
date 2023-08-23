@@ -18,7 +18,7 @@ module CustomTableSettings
     self.custom_table[key][:sorts] = sorts if !sorts.nil?
     self.custom_table[key][:per_page] = per_page.to_i if !per_page.nil? && [25, 50, 100].include?(per_page.to_i)
 
-    return save
+    return save!
     # write_attribute :custom_table, (custom_table||{}).merge(ss)
   end
 

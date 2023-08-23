@@ -3,7 +3,7 @@
   .btn-group
     = link_to params.permit!.merge({:format => :xlsx}), :class => "btn btn-outline-primary" do
       = t("download")
-      %i.bi.bi-download
+      = custom_table_download_icon
 
     - if local_assigns[:downloads] && downloads.length > 0
 

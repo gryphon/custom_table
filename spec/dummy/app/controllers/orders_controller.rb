@@ -58,7 +58,7 @@ class OrdersController < ApplicationController
   end
 
   def no_paginate
-    @orders = custom_table(@orders, paginate: false)
+    @orders = custom_table(@orders)
   end
 
   # GET /orders/1

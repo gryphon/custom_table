@@ -1,0 +1,8 @@
+Description:
+    Explain the generator
+
+Example:
+    bin/rails generate custom_table Thing
+
+    This will create:
+        what/will/it/create

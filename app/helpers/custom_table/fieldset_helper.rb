@@ -21,6 +21,7 @@ module CustomTable
         params = {} if params.nil?
         params = params.deep_merge(@params)
         params[:editable] = true if params[:editable].nil?
+        params[:adaptive] = false if params[:adaptive].nil?
 
         if params[:label].nil?
           if !defs.nil? && !defs[:label].blank?
@@ -30,20 +31,28 @@ module CustomTable
           end
         end
 
-        if block_given?
-          # We will render provided block
-          @template.field params[:label], &block
-        else
-          @template.field params[:label] do
-            if params[:editable] && has_editable?
-              params[:editable_params] = {} if params[:editable_params].nil?
-              @template.editable @object, column, **params[:editable_params] do
+        params[:template] = "field" if params[:template].nil?
+        params[:column] = column
+        params[:object] = @object
+
+        @template.render "custom_table/#{params[:template]}", **params do
+          if params[:editable] && has_editable?
+            params[:editable_params] = {} if params[:editable_params].nil?
+            @template.editable @object, column, **params[:editable_params] do
+              if block_given?
+                yield
+              else
                 @template.field_value_for(@object, column)
               end
+            end
+          else
+            if block_given?
+              yield
             else
               @template.field_value_for(@object, column)
             end
           end
+
         end
       end
 
@@ -60,13 +69,16 @@ module CustomTable
 
     end
 
-    def field label, adaptive: false, **params
-      params[:label] = label
-      params[:adaptive] = adaptive
-      render "custom_table/field", **params do
-        yield
-      end
+    def field object, column, **params, &block
+
+      params[:template] = "field_plain"
+
+      builder = FieldsetBuilder.new(object, self, **params)
+
+      builder.field(column, **params, &block)
+
     end
+
   end
 
 end

@@ -2,10 +2,15 @@
 - field_key = search_model.model_name.to_s
 - field_key += "-#{representation}" if !representation.nil?
 - cls = local_assigns[:large].nil? ? "btn-sm" : ""
+- items = custom_table_fields_settings_for(search_model, representation: representation)
+
+- columns = 1; size = "modal-md"
+- (columns = 2; size = "modal-lg") if items.length > 10
+- (columns = 3; size = "modal-xl") if items.length > 30
 
 .modal.fade.show{id: "customize-items-#{field_key}", tabindex: "-1", role: "dialog", "aria-labelledby": "loginLabel", "aria-hidden": "true", data: {controller: "remote-modal",
     action: "turbo:before-render@document->remote-modal#hideBeforeRender"}}
-  .modal-dialog.modal-lg
+  .modal-dialog{class: size}
     .modal-content
       .modal-header
         %h4#loginLabel.modal-title
@@ -26,15 +31,13 @@
             = f.hidden_field "model", value: search_model.model_name
             = f.hidden_field "representation", value: representation
 
-            - items = custom_table_fields_settings_for(search_model, representation: representation)
-
             = f.simple_fields_for :fields do |sfi|
-              %div{data: {controller: "sortable", "data-sortable-handle-value": ".handle"}}
+              %div{data: {controller: "sortable", "data-sortable-handle-value": ".handle"}, style: "columns: #{columns}"}
 
                 - items.each do |field, item|
                   -# = abort item.inspect
                   %div
-                    %i.bi.bi-arrow-down-up.handle{style: "cursor: move"}
+                    %i.handle{style: "cursor: move", class: custom_table_move_icon_class}
                     .form-check.form-switch.d-inline-block
                       -# - if item[:appear] == :always
                       = sfi.hidden_field field, value: 1 if item[:appear] == :always

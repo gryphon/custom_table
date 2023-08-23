@@ -8,11 +8,12 @@ Provides powerful set of functionality for showing tables of data:
 
 ## Setup
 
+* Run ```rails generate custom_table install``` to create User migration and Initializer
 * Generate base helpers
 * Add CustomTable engine routes
 * Add concern to controllers
 * Add CSS import to your application.css: ```@import 'custom_table/table.css';```
-* Add concern to User model and user ```custom_table``` field
+* Add concern to User model
 * Declare your first model
 
 ## Declaring fields
@@ -73,7 +74,6 @@ Is equivalent to:
 Optional parameters are:
 
 * ```default_sorts``` - ```string``` sorting order if user not selected it (default to ```created_at desc```)
-* ```pagination``` - ```boolean``` if pagination is enabled (default to ```true```)
 * ```default_query``` - default ransack ```q``` object. Default is empty 
 
 ## Rendering tables
@@ -90,6 +90,7 @@ Options available are:
 * ```skip_default_actions``` removes default actions
 * ```actions``` helper name for custom actions. Table also looks for ```{singular_model_name}_custom_table_actions``` helper presence
 * ```totals``` object of fields to show totals. Use symbols as keys and pass value or left nil to let table try to count total based on raw/field value
+* ```paginate``` set to false to skip pagination
 
 ## Rendering search panel
 
@@ -100,6 +101,8 @@ Use this helper in order to show filter panel:
 Options:
 
 * ```search_model``` model class to use with this filter. The only required parameter.
+* ```hide_customization``` hides customization button
+* ```fields``` if you want to have pre-defined fields, not from model definition
 
 ## Displaying custom fields
 

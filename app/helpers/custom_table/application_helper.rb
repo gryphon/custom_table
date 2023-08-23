@@ -1,12 +1,13 @@
 module CustomTable
   module ApplicationHelper
 
-    def boolean_icon(value, true_value = nil, false_value = nil)
-      capture do
-        concat content_tag(:i, "", class: (value ? "bi bi-check-lg text-success" : "bi bi-x-lg text-danger"), data: {raw: value})
-        concat content_tag(:span, value ? true_value : false_value, class: "ms-1") unless true_value.nil?
-      end
-    end
+    # MOVE TO GENERATED HELPER
+    # def boolean_icon(value, true_value = nil, false_value = nil)
+    #   capture do
+    #     concat content_tag(:i, "", class: (value ? "bi bi-check-lg text-success" : "bi bi-x-lg text-danger"), data: {raw: value})
+    #     concat content_tag(:span, value ? true_value : false_value, class: "ms-1") unless true_value.nil?
+    #   end
+    # end
 
     def custom_table_form_for(record, options = {}, &block)
       options[:url] = request.path if options[:url].nil?
@@ -82,7 +83,7 @@ module CustomTable
     end
   
     # Returns list of fields to show in table according user settings
-    def custom_table_fields_for(model, representation: nil, current_search: {}, predefined_fields: nil)
+    def custom_table_fields_for(model, representation: nil, current_search: {}, predefined_fields: nil, use_all_fields: false)
   
       fields = []
       current_search = {} if current_search.nil?
@@ -98,14 +99,18 @@ module CustomTable
   
       s = custom_table_user_customized_fields_for(model, representation)
   
-      if !s.nil?
-        # Use saved user settings for the model
-        always_selected_fields = model_fields.select { |x, y| [:always].include?(y[:appear]) || current_search.keys.include?(x.to_s) }.keys
-        always_selected_fields.each {|f| s = {"#{f.to_s}": true}.merge(s) if s[f].nil? }
-        selected_fields = s.select{|f,v| v }.keys
+      if use_all_fields
+        selected_fields = model_fields.keys
       else
-        # Use default model settings
-        selected_fields = model_fields.select { |x, y| [:always, :default].include?(y[:appear]) || current_search.keys.include?(x.to_s) }.keys
+        if !s.nil?
+          # Use saved user settings for the model
+          always_selected_fields = model_fields.select { |x, y| [:always].include?(y[:appear]) || current_search.keys.include?(x.to_s) }.keys
+          always_selected_fields.each {|f| s = {"#{f.to_s}": true}.merge(s) if s[f].nil? }
+          selected_fields = s.select{|f,v| v }.keys
+        else
+          # Use default model settings
+          selected_fields = model_fields.select { |x, y| [:always, :default].include?(y[:appear]) || current_search.keys.include?(x.to_s) }.keys
+        end
       end
   
       # Filter selection again with model settings for sure
@@ -117,12 +122,13 @@ module CustomTable
     def custom_table_fields_settings_for(model, representation: nil)
   
       model_fields = custom_table_fields_definition_for(model, representation)
-  
+      model_fields = model_fields.reject {|k,v| [:export, :never].include?(v[:appear]) }
+
       fields_key = model.model_name.to_s
       fields_key += "-#{representation}" unless representation.nil?
   
       user_customization = custom_table_user_customized_fields_for(model, representation)
-  
+
       if !user_customization.nil?
         # Add new fields at the top to user customization if not present
         model_fields.each do |f, v| 
@@ -135,7 +141,7 @@ module CustomTable
             user_customization = user_customization.merge(new_field)
           end
         end
-        return user_customization.collect{|f,v| [f, {selected: v}.merge(model_fields[f])]}.to_h
+        return user_customization.reject{|f,v| model_fields[f].nil?}.collect{|f,v| [f, {selected: v}.merge(model_fields[f])]}.to_h
       else
         # Use default model settings
         # abort model_fields.transform_values!{|f| f[:selected] = true}.inspect
@@ -169,7 +175,7 @@ module CustomTable
   
     def custom_table_customizable_fields_for(model, representation = nil)
       model_fields = custom_table_fields_definition_for(model, representation)
-      model_fields.reject {|k,v| [:always, :export].include?(v[:appear]) }
+      model_fields.reject {|k,v| [:always, :export, :never].include?(v[:appear]) }
     end
   
     # Base definition for model
@@ -215,6 +221,7 @@ module CustomTable
 
       params[:collection] = collection
       params[:representation] = representation
+      params[:paginate] = true if params[:paginate]!=false
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
       
       render "custom_table/table", params do
@@ -222,6 +229,7 @@ module CustomTable
       end
     end
   
+    # Data for updating values via turbo according object id and field name
     def custom_table_row_data item, representation = nil, **params
   
       params[:item] = item
@@ -283,7 +291,7 @@ module CustomTable
   
     def custom_table_settings_button search_model, representation=nil, size: "sm"
       link_to custom_table.edit_setting_path(search_model.model_name, representation: representation), :class => "btn btn-outline-primary btn-#{size}", data: {"turbo-frame": "remote-modal"} do
-        content_tag(:i, "", class: "bi bi-gear")
+        custom_table_settings_icon
       end
     end
 
