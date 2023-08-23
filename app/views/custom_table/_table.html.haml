@@ -75,11 +75,20 @@
               - fields_totals[field] = 0 if fields_totals[field].nil?
               - fields_totals[field] += v.to_f
 
-            - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
-              -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
-              = link_to v, [namespace, item]
+            - if defs[:editable]
+
+              = editable item, field do
+                - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
+                  -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
+                  = link_to v, [namespace, item]
+                - else
+                  = v
             - else
-              = v
+              - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
+                -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
+                = link_to v, [namespace, item]
+              - else
+                = v
 
         - if !local_assigns[:skip_actions]
 
