@@ -3,9 +3,11 @@
 - fields_totals = {}
 - representation = local_assigns[:representation]
 
-- customization = custom_table_user_customization_for(collection.model, representation)
-- per_page = params[:per] || customization&.dig(:per_page).presence || 25
-- collection = collection.page(params[:page]).per(per_page) if local_assigns[:paginate]
+- if collection.respond_to?(:model)
+  - customization = custom_table_user_customization_for(collection.model, representation)
+  - per_page = params[:per] || customization&.dig(:per_page).presence || 25
+  - collection = collection.page(params[:page]).per(per_page) if local_assigns[:paginate]
+  - collection = collection.without_count if !local_assigns[:last_page] # Disable Last Page for performance
 
 - local_assigns[:fields] = params[:fields].split(",").map { |x| x.to_sym } if local_assigns[:fields].nil? && !params[:fields].blank?
 - local_assigns[:skip_actions] = true if local_assigns[:skip_actions].nil? && params[:skip_actions].to_s=="true"

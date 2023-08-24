@@ -222,6 +222,7 @@ module CustomTable
       params[:collection] = collection
       params[:representation] = representation
       params[:paginate] = true if params[:paginate]!=false
+      params[:last_page] = true if params[:last_page]!=false
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
       
       render "custom_table/table", params do
