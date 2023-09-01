@@ -43,20 +43,7 @@ collection.except(:limit, :offset).each do |item|
   fields.each do |field, defs|
     next if defs[:table] == false
 
-    value = nil
-
-    if self.class.method_defined?("#{model_name}_#{field}_raw")
-      value = send("#{model_name}_#{field}_raw", item)
-    elsif self.class.method_defined?("#{global_model_name}_#{field}_raw")
-      value = send("#{global_model_name}_#{field}_raw", item)
-    else
-      begin
-        value = item.send(field)
-      rescue StandardError
-        value = nil
-      end
-    end
-
+    value = raw_field_value_for(item, field)
     val_def = nil
     val_style = aligned_style
 

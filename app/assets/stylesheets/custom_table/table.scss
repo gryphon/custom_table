@@ -46,6 +46,7 @@ table {
   padding: 2px;
   text-align: right;
   margin-right: 5px;
+  z-index: 1000;
 }
 
 .widget table.search-fields td {
@@ -72,5 +73,21 @@ table tr:hover, li.list-group-item:hover {
   }
   .d-action-none {
     display: inherit;
+  }
+}
+
+table {
+  tr.sticky, thead.sticky {
+    position: sticky;
+    background: white;
+    z-index: 1;
+  }
+  th.sticky-left, td.sticky-left {
+    position: sticky;
+    left: 0px;
+    background: white;
+  }
+  .text-sm {
+    font-size: 11px;
   }
 }

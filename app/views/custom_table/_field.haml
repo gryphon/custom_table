@@ -1,2 +1,4 @@
-%dt{class: adaptive ? "col-lg-2 col-md-5" : "col-5"}= label
-%dd{id: "#{column}_#{object.model_name.singular}_#{object.id}", class: adaptive ? "col-lg-4 col-md-7" : "col-7"}= yield
+%div.d-flex.justify-content-between.mb-2
+  %b= label
+  %span.text-end.d-inline{id: "#{column}_#{object.model_name.singular}_#{object.id}"}= yield
+-# %dt{class: adaptive ? "col-lg-2 col-md-5" : "col-5"}= label

@@ -27,21 +27,22 @@
         - defs[:search].each do |field|
 
           - a[key].push field[:q]
+          - label = field[:label] || defs[:label]
 
           - if field[:type] == :text
 
             - ih = {class: "form-control-sm"}
             - ih = ih.merge(defs[:input_html]) if !defs[:input_html].nil?
 
-            = f.input field[:q], input_html: ih, required: false, label: false, placeholder: defs[:label]
+            = f.input field[:q], input_html: ih, required: false, label: false, placeholder: label
 
           - if field[:type] == :boolean
 
-            = f.input field[:q], as: :boolean, input_html: {}, required: false, label: field[:label] || defs[:label], unchecked_value: ""
+            = f.input field[:q], as: :boolean, input_html: {}, required: false, label: label, unchecked_value: ""
 
           - if field[:type] == :switch
 
-            = f.input field[:q], as: :select, input_html: {:class => "form-select form-select-sm"}, required: false, label: false, :collection => [[t("yes")+" | #{defs[:label]}", "true"], [t("no")+" | #{defs[:label]}", "false"]], include_blank: defs[:label]
+            = f.input field[:q], as: :select, input_html: {:class => "form-select form-select-sm"}, required: false, label: false, :collection => [[t("yes")+" | #{label}", "true"], [t("no")+" | #{label}", "false"]], include_blank: label
 
           - if field[:type] == :select
 
@@ -52,7 +53,7 @@
               - collection = collection.accessible_by(current_ability) 
               - label_method = :to_s
 
-            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => collection, label_method: label_method, include_blank: defs[:label]
+            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => collection, label_method: label_method, include_blank: label
 
           - if field[:type] == :grouped_select
 
@@ -60,7 +61,7 @@
 
             - collection = collection.accessible_by(current_ability) if collection.class.to_s =~ /ActiveRecord_Relation/i
 
-            = f.input field[:q], :as => :grouped_select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, group_method: field[:group_method], :collection => collection, include_blank: defs[:label]
+            = f.input field[:q], :as => :grouped_select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, group_method: field[:group_method], :collection => collection, include_blank: label
 
           - if field[:type] == :autocomplete
 
@@ -68,7 +69,7 @@
 
             - collection = collection.accessible_by(current_ability) if collection.class.to_s =~ /ActiveRecord_Relation/i
 
-            = f.input field[:q], :as => :autocomplete, :input_html => {:class => "input-sm"}, :required => false, :label => false, :collection => collection, prompt: defs[:label]
+            = f.input field[:q], :as => :autocomplete, :input_html => {:class => "input-sm"}, :required => false, :label => false, :collection => collection, prompt: label
 
           - if field[:type] == :enum
 
@@ -76,13 +77,13 @@
             - collection = [search_model, key.to_s.pluralize] if collection.nil?
             - coll = collection[0].send(collection[1]).keys.map { |w| [(collection[0].method_defined?(:human_enum_name) ? collection[0].human_enum_name(collection[1].to_s.singularize, w) : w), w] }
 
-            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => coll, include_blank: defs[:label]
+            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => coll, include_blank: label
 
           - if field[:type] == :dates
             .col-12
               .input-group.input-group-sm{"data-controller": "dates"}
-                = f.input_field field[:q][0], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateFrom"}, :placeholder => defs[:label]+" ("+t("custom_table.date_from")+")"
-                = f.input_field field[:q][1], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateTo"}, :placeholder => defs[:label]+" ("+t("custom_table.date_to")+")"
+                = f.input_field field[:q][0], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateFrom"}, :placeholder => label+" ("+t("custom_table.date_from")+")"
+                = f.input_field field[:q][1], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateTo"}, :placeholder => label+" ("+t("custom_table.date_to")+")"
                 %button.btn.btn-outline-secondary.dropdown-toggle(type="button" data-bs-toggle="dropdown" aria-expanded="false")
                 %ul.dropdown-menu.dropdown-menu-end
                   %button.dropdown-item{type: "button", "data-action": "dates#prevWeek"}= t("analytics.previos_week")

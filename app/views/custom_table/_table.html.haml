@@ -16,125 +16,127 @@
 
 - fields = fields.except(*local_assigns[:skip_fields]) if !local_assigns[:skip_fields].nil?
 
-%table{class: ["search-fields", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table toggle"}}
-  %thead.sticky
-    %tr
-      - if local_assigns[:with_select]
-        %th.checkbox-col
-          = check_box_tag "check-all", "", true, data: {"toggle-target": "toggler", "action": "toggle#toggle"}
-      - if local_assigns[:with_index]
-        %th= "#"
-      - fields.each do |field, defs|
-        - next if defs[:table] == false
-        - cls = [field.to_s]
-        - defs[:amount] = true if defs[:amount].nil? && !model_class.columns_hash[field.to_s].nil? && [:float, :decimal, :integer].include?(model_class.columns_hash[field.to_s].type) && !model_class.defined_enums.has_key?(field.to_s)
-        - cls += ["text-end"] if defs[:amount]
-        %th{class: cls}
-          - if !defs[:sort].nil? && !@q.nil?
-            - defs[:sort] = {} if defs[:sort]===true
-            - sort_field = defs[:sort][:field].blank? ? field : defs[:sort][:field]
-            - sort_order = defs[:sort][:default_order].blank? ? :asc : defs[:sort][:default_order]
-            - if !@q.nil?
-              = sort_link @q, sort_field, default_order: sort_order, data: {sort: "custom-table-sort-#{sort_field}-#{sort_order}"} do
-                = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
-          - else
-            = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
-
-      - if !local_assigns[:skip_actions]
-        %th.text-end
-
-  %tbody
-
-    - position = 0
-
-    - collection.each do |item|
-
-      - position+=1
-
-      - model_name = item.model_name.singular # Allows to show different class models in one table!
-      -# = render partial: "custom_tables/table_row", locals: local_assigns.merge(item: item, position: position, fields: fields, fields_totals: fields_totals)
-      - row_class = local_assigns[:row_class] || "#{model_name}_row_class"
-      %tr{id: dom_id(item, "row"), :class => (self.send(row_class, item) rescue "")}
-
+%div.table-wrapper
+  %table{class: ["search-fields", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table toggle"}}
+    %thead.sticky
+      %tr
         - if local_assigns[:with_select]
-          %td.checkbox-col
-            = self.send(local_assigns[:with_select], item, position)
-
+          %th.checkbox-col
+            = check_box_tag "check-all", "", true, data: {"toggle-target": "toggler", "action": "toggle#toggle"}
         - if local_assigns[:with_index]
-          %td
-            = position
-
+          %th= "#"
         - fields.each do |field, defs|
           - next if defs[:table] == false
-          - td_classes = [field.to_s]
-          - td_classes += ["text-end"] if defs[:amount]
-          - td_classes += ["text-nowrap"] if defs[:nowrap]
+          - cls = [field.to_s]
+          - defs[:amount] = true if defs[:amount].nil? && !model_class.columns_hash[field.to_s].nil? && [:float, :decimal, :integer].include?(model_class.columns_hash[field.to_s].type) && !model_class.defined_enums.has_key?(field.to_s)
+          - cls += ["text-end"] if defs[:amount]
+          %th{class: cls}
+            - if !defs[:sort].nil? && !@q.nil?
+              - defs[:sort] = {} if defs[:sort]===true
+              - sort_field = defs[:sort][:field].blank? ? field : defs[:sort][:field]
+              - sort_order = defs[:sort][:default_order].blank? ? :asc : defs[:sort][:default_order]
+              - if !@q.nil?
+                = sort_link @q, sort_field, default_order: sort_order, data: {sort: "custom-table-sort-#{sort_field}-#{sort_order}"} do
+                  = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
+            - else
+              = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
 
-          %td{class: td_classes, id: dom_id(item, field)}
-            - v = field_value_for(item, field, definitions: defs, representation: representation)
+        - if !local_assigns[:skip_actions]
+          %th.text-end
 
-            - if !!(Float(v) rescue false)
-              - fields_totals[field] = 0 if fields_totals[field].nil?
-              - fields_totals[field] += v.to_f
+    %tbody
 
-            - if defs[:editable]
+      - position = 0
 
-              = editable item, field do
+      - collection.each do |item|
+
+        - position+=1
+
+        - model_name = item.model_name.singular # Allows to show different class models in one table!
+        -# = render partial: "custom_tables/table_row", locals: local_assigns.merge(item: item, position: position, fields: fields, fields_totals: fields_totals)
+        - row_class = local_assigns[:row_class] || "#{model_name}_row_class"
+        %tr{id: dom_id(item, "row"), :class => (self.send(row_class, item) rescue "")}
+
+          - if local_assigns[:with_select]
+            %td.checkbox-col
+              = self.send(local_assigns[:with_select], item, position)
+
+          - if local_assigns[:with_index]
+            %td
+              = position
+
+          - fields.each do |field, defs|
+            - next if defs[:table] == false
+            - td_classes = [field.to_s]
+            - td_classes += ["text-end"] if defs[:amount]
+            - td_classes += ["text-nowrap"] if defs[:nowrap]
+            - td_classes += ["amount"] if defs[:amount]
+
+            %td{class: td_classes, id: dom_id(item, field)}
+              - v = field_value_for(item, field, definitions: defs, representation: representation)
+
+              - if !!(Float(v) rescue false)
+                - fields_totals[field] = 0 if fields_totals[field].nil?
+                - fields_totals[field] += v.to_f
+
+              - if defs[:editable]
+
+                = editable item, field do
+                  - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
+                    -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
+                    = link_to v, [namespace, item]
+                  - else
+                    = v
+              - else
                 - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
                   -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
                   = link_to v, [namespace, item]
                 - else
                   = v
-            - else
-              - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
-                -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
-                = link_to v, [namespace, item]
-              - else
-                = v
 
-        - if !local_assigns[:skip_actions]
+          - if !local_assigns[:skip_actions]
 
-          %td.text-end.actions
-            - if !local_assigns[:actions].nil?
-              = self.send(local_assigns[:actions], item)
-            - elsif !representation.nil? && self.class.method_defined?("#{representation}_#{model_name}_custom_table_actions")
-              = self.send("#{representation}_#{model_name}_custom_table_actions", item)
-            - elsif self.class.method_defined?("#{model_name}_custom_table_actions")
-              = self.send("#{model_name}_custom_table_actions", item)
-            - if local_assigns[:skip_default_actions].nil?
-              - if (!custom_table_has_show_route?(item) || local_assigns[:force_edit_button]) && can?(:update, item)
-                = custom_table_edit_button [:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}"
-              - if can? :destroy, item
-                = custom_table_delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}"
+            %td.text-end.actions
+              - if !local_assigns[:actions].nil?
+                = self.send(local_assigns[:actions], item)
+              - elsif !representation.nil? && self.class.method_defined?("#{representation}_#{model_name}_custom_table_actions")
+                = self.send("#{representation}_#{model_name}_custom_table_actions", item)
+              - elsif self.class.method_defined?("#{model_name}_custom_table_actions")
+                = self.send("#{model_name}_custom_table_actions", item)
+              - if local_assigns[:skip_default_actions].nil?
+                - if (!custom_table_has_show_route?(item) || local_assigns[:force_edit_button]) && can?(:update, item)
+                  = custom_table_edit_button [:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}", modal: local_assigns[:modal_edit]
+                - if can? :destroy, item
+                  = custom_table_delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}"
 
-    - if local_assigns.has_key?(:extra) && !extra.nil?
-      - extra.each do |er|
-        - fields.each do |field, defs|
-          - next if defs[:table] == false
-          %td{class: [field.to_s]}
-            = er[field]
-        %td
-
-    - if collection.length == 0
-      %tr.warning.text-center
-        %th{:colspan=>"100%"}= t("no_records_found")
-    - else
-      - if local_assigns.has_key?(:totals) && !totals.nil?
-        %tr.totals{data: {"table-target": "move"}}
-          - if local_assigns[:with_index]
-            %th
+      - if local_assigns.has_key?(:extra) && !extra.nil?
+        - extra.each do |er|
           - fields.each do |field, defs|
             - next if defs[:table] == false
-            %th{class: [field.to_s, "text-end"]}
-              - if totals.include?(field)
-                - if totals[field].nil?
-                  - if !model_class.columns_hash[field.to_s].nil?
-                    = amount_color collection.except(:limit, :offset, :order).sum(field)
+            %td{class: [field.to_s]}
+              = er[field]
+          %td
+
+      - if collection.length == 0
+        %tr.warning.text-center
+          %th{:colspan=>"100%"}= t("no_records_found")
+      - else
+        - if local_assigns.has_key?(:totals) && !totals.nil?
+          %tr.totals{data: {"table-target": "move"}}
+            - if local_assigns[:with_index]
+              %th
+            - fields.each do |field, defs|
+              - next if defs[:table] == false
+              %th{class: [field.to_s, "text-end"]}
+                - if totals.include?(field)
+                  - if totals[field].nil?
+                    - if !model_class.columns_hash[field.to_s].nil?
+                      = amount_color collection.except(:limit, :offset, :order).sum(field)
+                    - else
+                      = amount_color fields_totals[field]
                   - else
-                    = amount_color fields_totals[field]
-                - else
-                  = amount_color totals[field]
-          %th.text-end
+                    = amount_color totals[field]
+            %th.text-end
 
 - if collection.respond_to? :total_pages
   .custom-table-pagination.overflow-hidden
@@ -142,11 +144,12 @@
     -#   - if !collection.last_page?
     -#     = link_to_next_page collection, raw(t('views.pagination.next'))
     -# - else
-    %nav.float-end.ms-2
-      %ul.pagination
-        - [25, 50, 100].each do |p|
-          %li.page-item{class: (collection.limit_value.to_i == p) ? "active" : ""}
-            = link_to p, url_for(params.permit!.merge({:per => p})), class: "page-link"
+    - if collection.total_count > 25
+      %nav.float-end.ms-2
+        %ul.pagination
+          - [25, 50, 100].each do |p|
+            %li.page-item{class: (collection.limit_value.to_i == p) ? "active" : ""}
+              = link_to p, url_for(params.permit!.merge({:per => p})), class: "page-link"
 
     - begin
       = paginate(collection, theme: 'bootstrap-5') 

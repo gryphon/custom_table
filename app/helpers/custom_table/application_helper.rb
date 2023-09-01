@@ -40,23 +40,39 @@ module CustomTable
       defs = definitions
 
       model_name = item.model_name.singular
-      global_model_name = item.class.model_name.singular
+      global_model_name = item.class.model_name.singular # non-model
+
+      helpers = []
+      helpers += [defs[:helper]] if !defs.nil?
+
+      helpers += [
+        "#{model_name}_#{representation}_#{field}_field",
+        "#{model_name}_#{representation}_#{field}",
+      ] if !representation.nil?
+
+      helpers += [
+        "#{model_name}_#{field}_field",
+        "#{model_name}_#{field}",
+        "#{model_name}_#{field}_raw",
+        "#{global_model_name}_#{field}"
+      ]
+
+      if item.class.superclass.to_s != "ApplicationRecord"
+        super_model_name = item.class.superclass.model_name.singular
+        helpers += [
+          "#{super_model_name}_#{field}_field",
+          "#{super_model_name}_#{field}",
+          "#{super_model_name}_#{field}_raw",
+        ] 
+      end
+
+      helpers = helpers.flatten.compact
+
+      helpers.each do |helper|
+        return self.send(helper, item) || not_set if self.class.method_defined?(helper)
+      end
   
-      if !defs.nil? && !defs[:helper].nil?
-        return self.send(defs[:helper], item, field).presence || not_set
-      elsif !representation.nil? && self.class.method_defined?("#{model_name}_#{representation}_#{field}_field")
-        return self.send("#{model_name}_#{representation}_#{field}_field", item).presence || not_set
-      elsif !representation.nil? && self.class.method_defined?("#{model_name}_#{representation}_#{field}")
-        return self.send("#{model_name}_#{representation}_#{field}", item).presence || not_set
-      elsif self.class.method_defined?("#{model_name}_#{field}_field")
-        return self.send("#{model_name}_#{field}_field", item).presence || not_set
-      elsif self.class.method_defined?("#{model_name}_#{field}")
-        return self.send("#{model_name}_#{field}", item).presence || not_set
-      elsif self.class.method_defined?("#{model_name}_#{field}_raw")
-        return self.send("#{model_name}_#{field}_raw", item).presence || not_set
-      elsif self.class.method_defined?("#{global_model_name}_#{field}")
-        return self.send("#{global_model_name}_#{field}", item).presence || not_set
-      elsif !defs.nil? && defs[:amount]
+      if !defs.nil? && defs[:amount]
         if !item.class.columns_hash[field.to_s].nil? && item.class.columns_hash[field.to_s].type == :integer
           return amount_value(item.send(field), 0) rescue ""
         else
@@ -82,6 +98,63 @@ module CustomTable
       
     end
   
+    # Same as above but for Export only
+    def raw_field_value_for item, field, definitions: nil, representation: nil
+ 
+      defs = definitions
+
+      model_name = item.model_name.singular
+      global_model_name = item.class.model_name.singular
+  
+      helpers = []
+
+      helpers += [
+        "#{model_name}_#{representation}_#{field}_field_raw",
+        "#{model_name}_#{representation}_#{field}_raw",
+      ] if !representation.nil?
+
+      helpers += [
+        "#{model_name}_#{field}_field_raw",
+        "#{model_name}_#{field}_raw",
+        "#{global_model_name}_#{field}_raw"
+      ]
+
+      if item.class.superclass.to_s != "ApplicationRecord"
+        super_model_name = item.class.superclass.model_name.singular
+        helpers += [
+          "#{super_model_name}_#{field}_field_raw",
+          "#{super_model_name}_#{field}_raw",
+        ] 
+      end
+
+      helpers = helpers.flatten.compact
+
+      helpers.each do |helper|
+        return self.send(helper, item) if self.class.method_defined?(helper)
+      end
+
+      if !defs.nil? && defs[:amount]
+        return item.send(field) rescue nil
+      else
+        if item.class.reflect_on_association(field)
+          return item.send(field).to_s rescue nil
+        elsif item.class.columns_hash[field.to_s] && item.class.columns_hash[field.to_s].type == :boolean
+          return item.send(field) rescue nil
+        elsif item.class.defined_enums.has_key?(field.to_s)
+          return (item.send(field).presence) rescue nil
+        elsif item.class.columns_hash[field.to_s] && [:date, :datetime].include?(item.class.columns_hash[field.to_s].type)
+          return (item.send(field).blank? ? nil : field) rescue nil
+        elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)
+          return nil if (item.send(field) rescue nil).nil?
+          return item.send(field) rescue nil
+        else
+          return (item.send(field).presence).to_s rescue nil
+        end
+      end
+      
+    end
+  
+
     # Returns list of fields to show in table according user settings
     def custom_table_fields_for(model, representation: nil, current_search: {}, predefined_fields: nil, use_all_fields: false)
   
@@ -224,6 +297,8 @@ module CustomTable
       params[:paginate] = true if params[:paginate]!=false
       params[:last_page] = true if params[:last_page]!=false
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
+      params[:force_edit_button] = false if params[:force_edit_button].nil?
+      params[:modal_edit] = true if params[:modal_edit].nil?
       
       render "custom_table/table", params do
         yield

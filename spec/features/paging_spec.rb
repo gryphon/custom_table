@@ -2,7 +2,7 @@ require 'rails_helper'
 
 feature "table display" do
 
-  let!(:orders) { FactoryBot.create_pair(:order) }
+  let!(:orders) { FactoryBot.create_list(:order, 50) }
 
   describe "authenticated" do
 
@@ -25,7 +25,7 @@ feature "table display" do
 
       end
 
-      it "loads sorting direstion" do
+      it "loads sorting direction" do
 
         @user.save_custom_table_settings(Order, per_page: 50)
 
