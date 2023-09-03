@@ -84,13 +84,13 @@
                 = editable item, field do
                   - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
                     -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
-                    = link_to v, [namespace, item]
+                    = link_to v, [namespace, item], data: {turbo: false}
                   - else
                     = v
               - else
                 - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
                   -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
-                  = link_to v, [namespace, item]
+                  = link_to v, [namespace, item], data: {turbo: false}
                 - else
                   = v
 
@@ -144,14 +144,15 @@
     -#   - if !collection.last_page?
     -#     = link_to_next_page collection, raw(t('views.pagination.next'))
     -# - else
-    - if collection.total_count > 25
-      %nav.float-end.ms-2
-        %ul.pagination
-          - [25, 50, 100].each do |p|
-            %li.page-item{class: (collection.limit_value.to_i == p) ? "active" : ""}
-              = link_to p, url_for(params.permit!.merge({:per => p})), class: "page-link"
 
     - begin
+      - if collection.total_count > 25
+        %nav.float-end.ms-2
+          %ul.pagination
+            - [25, 50, 100].each do |p|
+              %li.page-item{class: (collection.limit_value.to_i == p) ? "active" : ""}
+                = link_to p, url_for(params.permit!.merge({:per => p})), class: "page-link"
+
       = paginate(collection, theme: 'bootstrap-5') 
     - rescue
       = link_to_prev_page collection, t("views.pagination.previous"), class: "btn btn-outline-primary"

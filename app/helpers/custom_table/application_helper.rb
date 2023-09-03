@@ -69,7 +69,14 @@ module CustomTable
       helpers = helpers.flatten.compact
 
       helpers.each do |helper|
-        return self.send(helper, item) || not_set if self.class.method_defined?(helper)
+        if self.class.method_defined?(helper)
+          if self.method(helper).arity == 1
+            return self.send(helper, item) || not_set 
+          end
+          if self.method(helper).arity == 2
+            return self.send(helper, item, field) || not_set 
+          end
+        end
       end
   
       if !defs.nil? && defs[:amount]
