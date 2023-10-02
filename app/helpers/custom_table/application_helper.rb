@@ -151,8 +151,9 @@ module CustomTable
           return (item.send(field).presence) rescue nil
         elsif item.class.columns_hash[field.to_s] && [:date, :datetime].include?(item.class.columns_hash[field.to_s].type)
           return (item.send(field).blank? ? nil : field) rescue nil
-        elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)
-          return nil if (item.send(field) rescue nil).nil?
+        elsif item.class.columns_hash[field.to_s] && [:float, :decimal].include?(item.class.columns_hash[field.to_s].type)
+          return item.send(field).round(2) rescue nil
+        elsif item.class.columns_hash[field.to_s] && [:integer].include?(item.class.columns_hash[field.to_s].type)
           return item.send(field) rescue nil
         else
           return (item.send(field).presence).to_s rescue nil
