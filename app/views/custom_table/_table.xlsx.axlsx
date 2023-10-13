@@ -33,7 +33,7 @@ if defined?(extra_head)
 end
 
 sheet.add_row(head, style: head_style)
-collection.except(:limit, :offset).each do |item|
+collection.except(:limit, :offset).find_each do |item|
   row_def = []
   row = []
   style_def = []

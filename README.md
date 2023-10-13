@@ -83,6 +83,7 @@ Invoke this in your index to display table:
 
 Options available are:
 
+* Second parameter is variant (can be skipped if you dont use variants)
 * ```collection``` is the only required option. Contains paged collection from your controller
 * ```parent``` parent resource for inherited routes
 * ```skip_fields``` array of field names as symbols. Removes specific fields from table
@@ -120,9 +121,9 @@ If helper is not accessible table will try to render item via following methods:
 * Raw text attributes
 * Boolean attribute via ```boolean_icon``` helper. Uses bootstrap icons and can be overriden
 
-If you use representation, following helper will have the priority over all options:
-* ```#{singular_model_name}_#{representation}_#{field}_field```
-* ```#{singular_model_name}_#{representation}_#{field}```
+If you use variant, following helper will have the priority over all options:
+* ```#{singular_model_name}_#{variant}_#{field}_field```
+* ```#{singular_model_name}_#{variant}_#{field}```
 
 ## Displaying custom actions
 
@@ -138,17 +139,17 @@ Search Settings button will show up automatically if you have at least one custo
 
 You can also use settings button separatelly. It uses Rails turbo and you need to declare ```turbo-modal``` Turbo Tag within your HTML body.
 
-## Representations
+## Variants
 
-For each table you can declare additional representations (set of parameters to be saved to user customization).
+For each table you can declare additional variants (set of parameters to be saved to user customization).
 
-Important to note that you need to explicitly set list of available representations. Declare the following helper function:
+Important to note that you need to explicitly set list of available variants. Declare the following helper function:
 
 ```{singular_model_name}_custom_table_fields```
 
-Which returns the array of available representation.
+Which returns the array of available variant.
 
-Then just pass representation to filter and data helpers.
+Then just pass variant to filter and data helpers.
 
 ## Table Stimulus helper
 
@@ -192,6 +193,10 @@ You can declare how each field is displayed. Just add it as block within field:
     = fieldset @instance do |fs|
       = fs.field :name do
         = @instance.name.upcase
+
+## Testing
+
+Use ```custom_table_use_all_fields``` GET param with any value to show all available fields in your feature tests
 
 ## Development
 

@@ -101,7 +101,7 @@ feature "table display" do
 
 
 
-    describe "representation" do
+    describe "variant" do
 
       it "shows default list of orders" do
 
@@ -137,7 +137,7 @@ feature "table display" do
 
         visit orders_path
 
-        # Excluded in defailt representation by default
+        # Excluded in defailt variant by default
         expect(page.body).not_to match have_content orders[0].details
 
       end

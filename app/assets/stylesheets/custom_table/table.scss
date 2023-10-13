@@ -100,3 +100,17 @@ table {
     margin-bottom: 4px !important;
   }
 }
+
+.tree-opener {
+  .opened {
+    display: none;
+  }
+  &.opened {
+    .opened {
+      display: inline;
+    }
+    .closed {
+      display: none;
+    }
+  }
+}

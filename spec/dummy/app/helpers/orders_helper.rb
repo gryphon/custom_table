@@ -4,7 +4,7 @@ module OrdersHelper
     content_tag(:i, "", class: "bi bi-airplane-engines")
   end
 
-  def order_custom_table_representations
+  def order_custom_table_variants
     ["another"]
   end
 

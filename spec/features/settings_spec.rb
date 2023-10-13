@@ -60,13 +60,13 @@ feature "settings display" do
 
     end
 
-    describe "with representation" do
+    describe "with variant" do
 
       it "shows user settings" do
 
         @user.save_custom_table_settings(Order, "another", fields: {details: false, name: false})
 
-        visit custom_table.edit_setting_path("Order", representation: "another")
+        visit custom_table.edit_setting_path("Order", variant: "another")
 
         expect(find_field("user[fields][name]").checked?).to eq false
 

@@ -1,5 +1,5 @@
 - model_class = item.class
-- fields = custom_table_fields_for(model_class, use_all_fields: true, representation: local_assigns[:representation], predefined_fields: local_assigns[:fields]) 
+- fields = custom_table_fields_for(model_class, use_all_fields: true, variant: local_assigns[:variant], predefined_fields: local_assigns[:fields]) 
 - model_name = item.model_name.singular # Allows to show different class models in one table!
 
 - fields.each do |field, defs|

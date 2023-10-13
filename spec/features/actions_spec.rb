@@ -61,11 +61,11 @@ feature "table display" do
 
     end
 
-    describe "representation" do
+    describe "variant" do
 
-      it "shows actions for representation" do
+      it "shows actions for variant" do
 
-        visit actions_representation_orders_path
+        visit actions_variant_orders_path
 
         expect(page).to have_content("OLEILO")
 

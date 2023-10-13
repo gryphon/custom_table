@@ -53,7 +53,7 @@ feature "table display" do
 
     end
 
-    describe "representation" do
+    describe "variant" do
 
       it "saves sorting direstion" do
 

@@ -35,7 +35,7 @@ module CustomTable
     # Helper {singular_model_name}_{field}
     # Helper {singular_model_name}_{field}_raw
     # Attribute of model
-    def field_value_for item, field, definitions: nil, representation: nil
+    def field_value_for item, field, definitions: nil, variant: nil
  
       defs = definitions
 
@@ -46,9 +46,9 @@ module CustomTable
       helpers += [defs[:helper]] if !defs.nil?
 
       helpers += [
-        "#{model_name}_#{representation}_#{field}_field",
-        "#{model_name}_#{representation}_#{field}",
-      ] if !representation.nil?
+        "#{model_name}_#{variant}_#{field}_field",
+        "#{model_name}_#{variant}_#{field}",
+      ] if !variant.nil?
 
       helpers += [
         "#{model_name}_#{field}_field",
@@ -104,9 +104,52 @@ module CustomTable
       end
       
     end
+
+    def custom_table_totals collection, fields, totals = {}, fields_totals = {}
+
+      out = {}
+      totals = {} if totals.nil?
+      fields_totals = {} if fields_totals.nil?
+
+      model_class = collection.model
+
+      fields.keys.each do |field|
+
+        # We only work if field total is enabled explicitly with definition or totals
+        next if !fields[field][:total] && !totals.has_key?(field)
+
+        # Taking pre-defined value if available
+        if !totals[field].nil?
+          out[field] = totals[field]
+        else
+
+          # Trying to find helper first
+          model_name = model_class.model_name.singular
+          helper = "#{model_name}_#{field}_total"
+
+          if self.class.method_defined?(helper)
+            # Better use helper!
+            out[field] = self.send(helper, collection.except(:limit, :offset, :order, :group))
+          else
+            if !model_class.columns_hash[field.to_s].nil?
+              # We can try to sum value from database
+              out[field] = collection.except(:limit, :offset, :order, :group).sum(field)
+            else
+              # Taking simple summed value
+              out[field] = fields_totals[field]
+            end
+
+          end
+
+        end
+      end
+
+      out
+
+    end
   
     # Same as above but for Export only
-    def raw_field_value_for item, field, definitions: nil, representation: nil
+    def raw_field_value_for item, field, definitions: nil, variant: nil
  
       defs = definitions
 
@@ -116,9 +159,9 @@ module CustomTable
       helpers = []
 
       helpers += [
-        "#{model_name}_#{representation}_#{field}_field_raw",
-        "#{model_name}_#{representation}_#{field}_raw",
-      ] if !representation.nil?
+        "#{model_name}_#{variant}_#{field}_field_raw",
+        "#{model_name}_#{variant}_#{field}_raw",
+      ] if !variant.nil?
 
       helpers += [
         "#{model_name}_#{field}_field_raw",
@@ -150,7 +193,7 @@ module CustomTable
         elsif item.class.defined_enums.has_key?(field.to_s)
           return (item.send(field).presence) rescue nil
         elsif item.class.columns_hash[field.to_s] && [:date, :datetime].include?(item.class.columns_hash[field.to_s].type)
-          return (item.send(field).blank? ? nil : field) rescue nil
+          return (item.send(field).presence) rescue nil
         elsif item.class.columns_hash[field.to_s] && [:float, :decimal].include?(item.class.columns_hash[field.to_s].type)
           return item.send(field).round(2) rescue nil
         elsif item.class.columns_hash[field.to_s] && [:integer].include?(item.class.columns_hash[field.to_s].type)
@@ -164,22 +207,29 @@ module CustomTable
   
 
     # Returns list of fields to show in table according user settings
-    def custom_table_fields_for(model, representation: nil, current_search: {}, predefined_fields: nil, use_all_fields: false)
+    def custom_table_fields_for(model, variant: nil, current_search: {}, predefined_fields: nil, use_all_fields: false)
   
       fields = []
       current_search = {} if current_search.nil?
   
-      model_fields = custom_table_fields_definition_for(model, representation)
+      model_fields = custom_table_fields_definition_for(model, variant)
   
       if (!predefined_fields.nil?)
-        return model_fields.select {|k,v| predefined_fields.include?(k) }
+        out = {}
+        predefined_fields.each do |f|
+          out[f] = model_fields[f]
+        end
+        return out.compact
+        # return model_fields.select {|k,v| predefined_fields.include?(k) }
       end
   
       fields_key = model.model_name.to_s
-      fields_key += "-#{representation}" unless representation.nil?
+      fields_key += "-#{variant}" unless variant.nil?
   
-      s = custom_table_user_customized_fields_for(model, representation)
-  
+      s = custom_table_user_customized_fields_for(model, variant)
+ 
+      use_all_fields = true if params[:custom_table_use_all_fields]
+
       if use_all_fields
         selected_fields = model_fields.keys
       else
@@ -200,15 +250,15 @@ module CustomTable
     end
   
     # Returns list of fields for customization form
-    def custom_table_fields_settings_for(model, representation: nil)
+    def custom_table_fields_settings_for(model, variant: nil)
   
-      model_fields = custom_table_fields_definition_for(model, representation)
+      model_fields = custom_table_fields_definition_for(model, variant)
       model_fields = model_fields.reject {|k,v| [:export, :never].include?(v[:appear]) }
 
       fields_key = model.model_name.to_s
-      fields_key += "-#{representation}" unless representation.nil?
+      fields_key += "-#{variant}" unless variant.nil?
   
-      user_customization = custom_table_user_customized_fields_for(model, representation)
+      user_customization = custom_table_user_customized_fields_for(model, variant)
 
       if !user_customization.nil?
         # Add new fields at the top to user customization if not present
@@ -233,58 +283,58 @@ module CustomTable
     end
   
     # Prepares object of user fields customization
-    def custom_table_user_customized_fields_for(model, representation = nil)
-      fields_key = custom_table_fields_key(model, representation)
-      defs = custom_table_fields_definition_for(model, representation)
+    def custom_table_user_customized_fields_for(model, variant = nil)
+      fields_key = custom_table_fields_key(model, variant)
+      defs = custom_table_fields_definition_for(model, variant)
       return nil if current_user.nil? || current_user.custom_table.nil? || current_user.custom_table.dig(fields_key, :fields).nil?
       return current_user.custom_table.dig(fields_key, :fields).symbolize_keys.reject{|k,v| defs[k.to_sym].nil?}
   
     end
   
     # Prepares object of user search customization
-    def custom_table_user_customization_for(model, representation = nil)
-      fields_key = custom_table_fields_key(model, representation)
+    def custom_table_user_customization_for(model, variant = nil)
+      fields_key = custom_table_fields_key(model, variant)
       return nil if current_user.nil? || current_user.custom_table.nil?
       return current_user.custom_table[fields_key]&.symbolize_keys
     end
   
-    def custom_table_fields_key(model, representation = nil)
+    def custom_table_fields_key(model, variant = nil)
       fields_key = model.model_name.to_s
-      fields_key += "-#{representation}" unless representation.nil?
+      fields_key += "-#{variant}" unless variant.nil?
       return fields_key
     end
   
-    def custom_table_customizable_fields_for(model, representation = nil)
-      model_fields = custom_table_fields_definition_for(model, representation)
+    def custom_table_customizable_fields_for(model, variant = nil)
+      model_fields = custom_table_fields_definition_for(model, variant)
       model_fields.reject {|k,v| [:always, :export, :never].include?(v[:appear]) }
     end
   
     # Base definition for model
-    def custom_table_fields_definition_for(model, representation = nil)
+    def custom_table_fields_definition_for(model, variant = nil)
       helper_name = "#{model.model_name.singular}_custom_table_fields"
       if (! self.class.method_defined?(helper_name))
         raise "#{helper_name} helper is not defined so we do not know how to render custom_table for #{model}"
       end
 
-      if representation.nil? || method(helper_name).parameters.empty?
+      if variant.nil? || method(helper_name).parameters.empty?
         defs = self.send("#{helper_name}")
       else
-        defs = self.send("#{helper_name}", representation)
+        defs = self.send("#{helper_name}", variant)
       end
 
       return defs.each{|x,y| y[:label] = model.human_attribute_name(x) if y[:label].nil? }
     end
   
     # Base definition for model
-    def custom_table_fields_definition_for_field(model, field, representation = nil)
+    def custom_table_fields_definition_for_field(model, field, variant = nil)
       helper_name = "#{model.model_name.singular}_custom_table_fields"
       if (! self.class.method_defined?(helper_name))
         raise "#{helper_name} helper is not defined so we do not know how to render custom_table for #{model}"
       end
-      if representation.nil? || method(helper_name).parameters.empty?
+      if variant.nil? || method(helper_name).parameters.empty?
         defs = self.send("#{helper_name}")
       else
-        defs = self.send("#{helper_name}", representation)
+        defs = self.send("#{helper_name}", variant)
       end
       return nil if defs[field].nil?
       defs[:label] = model.human_attribute_name(field) if defs[:label].nil?
@@ -293,15 +343,15 @@ module CustomTable
   
 
     # Returns true if model can be customized by current user at least by one field
-    def current_user_has_customizable_fields_for?(model, representation=nil)
+    def current_user_has_customizable_fields_for?(model, variant=nil)
       return false if current_user.nil?
-      custom_table_customizable_fields_for(model, representation).count.positive?
+      custom_table_customizable_fields_for(model, variant).count.positive?
     end
   
-    def custom_table_data collection, representation=nil, **params
+    def custom_table_data collection, variant=nil, **params
 
       params[:collection] = collection
-      params[:representation] = representation
+      params[:variant] = variant
       params[:paginate] = true if params[:paginate]!=false
       params[:last_page] = true if params[:last_page]!=false
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
@@ -314,10 +364,10 @@ module CustomTable
     end
   
     # Data for updating values via turbo according object id and field name
-    def custom_table_row_data item, representation = nil, **params
+    def custom_table_row_data item, variant = nil, **params
   
       params[:item] = item
-      params[:representation] = representation
+      params[:variant] = variant
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
       
       render "custom_table/table_row_data", params do
@@ -325,10 +375,10 @@ module CustomTable
       end
     end
   
-    def custom_table_filter search_model, representation=nil, **params, &block
+    def custom_table_filter search_model, variant=nil, **params, &block
 
       params[:search_model] = search_model
-      params[:representation] = representation
+      params[:variant] = variant
       render "custom_table/filter", params do |f|
         yield if !block.nil?
       end
@@ -359,30 +409,39 @@ module CustomTable
       content_tag(:span, amount_round(c), class: ["amount", (c.to_f >= 0 ? "positive" : "negative")])
     end
   
-    def custom_table_download_button collection, **params
-      params[:collection] = collection
-      render "custom_table/download", params
+    def custom_table_download_button collection, **p
+      p[:collection] = collection
+      p[:downloads] ||= {}
+      p[:downloads].unshift({title: t("custom_table.download_as_csv"), href: params.permit!.merge({:format => :csv})}) if p[:csv]
+      render "custom_table/download", p
     end
   
-    def custom_table_settings search_model, representation=nil, **params
+    def custom_table_settings search_model, variant=nil, **params
 
       params[:search_model] = search_model
-      params[:representation] = representation
+      params[:variant] = variant
   
       render "custom_table/settings", params
   
     end
   
-    def custom_table_settings_button search_model, representation=nil, size: "sm"
-      link_to custom_table.edit_setting_path(search_model.model_name, representation: representation), :class => "btn btn-outline-primary btn-#{size}", data: {"turbo-frame": "remote-modal"} do
+    def custom_table_settings_button search_model, variant=nil, size: "sm"
+      link_to custom_table.edit_setting_path(search_model.model_name, variant: variant), :class => "btn btn-outline-primary btn-#{size}", data: {"turbo-frame": "remote-modal"} do
         custom_table_settings_icon
       end
     end
 
-    def custom_table_representations_for model
-      helper_name = "#{model.model_name.singular}_custom_table_representations"
+    def custom_table_variants_for model
+      helper_name = "#{model.model_name.singular}_custom_table_variants"
       return self.send(helper_name) if self.class.method_defined?(helper_name)
       return []
+    end
+
+    def tree_opener item, has_children=false
+      content_tag :button, class: "btn btn-sm tree-opener", data: {action: (has_children ? "table#toggle" : ""), "table-css-param": ".child-of-#{item.id}"} do
+        concat content_tag(:span, (has_children ? "▶" : "▷"), class: "closed")
+        concat content_tag(:span, "▼", class: "opened")
+      end
     end
 
   end

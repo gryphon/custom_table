@@ -50,7 +50,7 @@ feature "table display" do
 
     end
 
-    describe "with representation" do
+    describe "with variant" do
 
       it "saves per page" do
 

@@ -41,7 +41,7 @@ class OrdersController < ApplicationController
   end
 
   # GET /orders/skip_actions
-  def actions_representation
+  def actions_variant
     @orders = custom_table(@orders)
   end
 

@@ -6,11 +6,11 @@ module CustomTableSettings
     serialize :custom_table
   end
 
-  def save_custom_table_settings model_class, representation = nil, fields: nil, sorts: nil, per_page: nil
+  def save_custom_table_settings model_class, variant = nil, fields: nil, sorts: nil, per_page: nil
 
     model = model_class.model_name.to_s
     key = model
-    key = "#{model}-#{representation}" if !representation.nil?
+    key = "#{model}-#{variant}" if !variant.nil?
     self.custom_table = {} if self.custom_table.nil?
     self.custom_table[key] = {} if self.custom_table[key].nil?
     self.custom_table[key][:model] = model
@@ -23,13 +23,13 @@ module CustomTableSettings
   end
 
 
-  def destroy_custom_table_settings model_class, representation = nil
+  def destroy_custom_table_settings model_class, variant = nil
 
     return true if self.custom_table.nil?
 
     model = model_class.model_name.to_s
     key = model
-    key = "#{model}-#{representation}" if !representation.nil?
+    key = "#{model}-#{variant}" if !variant.nil?
 
     return true if self.custom_table[key].nil?
 
