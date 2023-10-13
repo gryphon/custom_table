@@ -111,8 +111,6 @@ module CustomTable
       totals = {} if totals.nil?
       fields_totals = {} if fields_totals.nil?
 
-      model_class = collection.model
-
       fields.keys.each do |field|
 
         # We only work if field total is enabled explicitly with definition or totals
@@ -122,7 +120,7 @@ module CustomTable
         if !totals[field].nil?
           out[field] = totals[field]
         else
-
+          model_class = collection.model
           # Trying to find helper first
           model_name = model_class.model_name.singular
           helper = "#{model_name}_#{field}_total"
