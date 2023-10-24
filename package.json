@@ -1,0 +1,16 @@
+{
+  "name": "custom_table",
+  "version": "1.0.0",
+  "description": "Custom Table Asset Files",
+  "main": "index.js",
+  "private": true,
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gryphon/custom_table.git"
+  },
+  "author": "Gryphon",
+  "license": "ISC",
+  "homepage": "https://github.com/gryphon/custom_table",
+  "dependencies": {}
+}
