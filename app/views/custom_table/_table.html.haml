@@ -19,6 +19,15 @@
 %div.table-wrapper
   %table{class: ["search-fields", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table toggle"}}
     %thead.sticky
+      - if local_assigns[:quick_filter]
+        %tr
+          %td{colspan: "100%"}
+            .input-group
+              .input-group-text
+                = custom_table_search_icon
+              %input.form-control-sm.form-control{type: "text", data: {action: "table#search"}, placeholder: t("custom_table.quick_search")}
+
+
       %tr
 
         - if local_assigns[:tree]

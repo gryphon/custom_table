@@ -14,3 +14,5 @@ ru:
     no_records_found: Записи не найдены
     download_as_csv: Скачать в CSV
     huge_xlsx_alert: Слишком много записей для экспорта в формате Excel. Попробуйте %{csv}
+    quick_search: Быстрый поиск
+

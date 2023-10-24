@@ -93,6 +93,7 @@ Options available are:
 * ```totals``` object of fields to show totals. Use symbols as keys and pass value or left nil to let table try to count total based on raw/field value
 * ```paginate``` set to false to skip pagination
 * ```last_page``` set to false to disable last page count request for performance
+* ```quick_filter``` set to true to enable simple full-text client-side search
 
 ## Rendering search panel
 

@@ -14,3 +14,4 @@ en:
     no_records_found: No records found
     download_as_csv: Download as CSV
     huge_xlsx_alert: Too many records to download in Excel format. Try %{csv}
+    quick_search: Quick Search

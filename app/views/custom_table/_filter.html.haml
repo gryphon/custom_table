@@ -53,7 +53,7 @@
               - collection = collection.accessible_by(current_ability) 
               - label_method = :to_s
 
-            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => collection, label_method: label_method, include_blank: label
+            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => collection, label_method: label_method, include_blank: label, value_method: field[:value_method]
 
           - if field[:type] == :grouped_select
 

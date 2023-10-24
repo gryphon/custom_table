@@ -23,6 +23,11 @@ module CustomTable
       return custom_table_icon("bi bi-slash-circle") if CustomTable.configuration.icons_framework == :bi
     end
 
+    def custom_table_search_icon
+      return custom_table_icon("fa fa-search") if CustomTable.configuration.icons_framework == :fa
+      return custom_table_icon("bi bi-search") if CustomTable.configuration.icons_framework == :bi
+    end
+
     def custom_table_icon c
       return content_tag(:i, "", class: c)
     end
