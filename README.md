@@ -95,6 +95,7 @@ Options available are:
 * ```paginate``` set to false to skip pagination
 * ```last_page``` set to false to disable last page count request for performance
 * ```quick_filter``` set to true to enable simple full-text client-side search
+* ```with_select``` allows to add checkboxes toggler. Pass helper name which has (item, position) as parameters
 
 ## Rendering search panel
 

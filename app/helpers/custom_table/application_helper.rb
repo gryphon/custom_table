@@ -440,8 +440,8 @@ module CustomTable
       return []
     end
 
-    def tree_opener item, has_children=false
-      content_tag :button, class: "btn btn-sm tree-opener", data: {action: (has_children ? "table#toggle" : ""), "table-css-param": ".child-of-#{item.id}"} do
+    def tree_opener item_id, has_children=false
+      content_tag :button, class: "btn btn-sm tree-opener", data: {action: (has_children ? "table#toggle" : ""), "table-css-param": ".child-of-#{item_id}"} do
         concat content_tag(:span, (has_children ? "▶" : "▷"), class: "closed")
         concat content_tag(:span, "▼", class: "opened")
       end

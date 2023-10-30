@@ -78,6 +78,31 @@
               - position+=1
               = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals})
 
+      - elsif local_assigns[:group_by]
+
+        - if collection.length > 0
+
+          - grouped_collection = collection.group_by{|i| self.send(local_assigns[:group_by], i)}
+
+          -# - (grouped_collection[nil] || []).each do |ungrouped_items|
+          -#   - ungrouped_items.each do |item|
+          -#     - position+=1
+          -#     = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals})
+
+          -# - abort Hash[grouped_collection.sort_by{|k,v| k.to_s}].inspect
+
+          - Hash[grouped_collection.sort_by{|k,v| k.to_s}].each do |group, items|
+
+            - if !group.nil?
+              %tr
+                %th{colspan: "100%"}
+                  = tree_opener(group, true)
+                  = group
+
+            - items.each do |item|
+              - position+=1
+              = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals, grouped_by_id: group})
+
       - else
 
         - collection.each do |item|
