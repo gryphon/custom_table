@@ -129,11 +129,16 @@ module CustomTable
             # Better use helper!
             out[field] = self.send(helper, collection.except(:limit, :offset, :order, :group))
           else
-            if !model_class.columns_hash[field.to_s].nil?
+            if collection.respond_to?(:total_pages) && (!model_class.columns_hash[field.to_s].nil? || !fields[field][:total_scope].nil?) 
               # We can try to sum value from database
-              out[field] = collection.except(:limit, :offset, :order, :group).sum(field)
+
+              if fields[field][:total_scope].nil?
+                out[field] = collection.except(:limit, :offset, :order, :group).sum(field)
+              else 
+                out[field] = collection.except(:limit, :offset, :order, :group).send(fields[field][:total_scope])
+              end
             else
-              # Taking simple summed value
+              # Taking simple summed value because all data is shown
               out[field] = fields_totals[field]
             end
 

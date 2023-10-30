@@ -161,6 +161,7 @@
         - found_totals = custom_table_totals(collection, fields, local_assigns[:totals], fields_totals)
 
         - if !found_totals.empty?
+
           %tr.totals{data: {"table-target": "move"}}
             - if local_assigns[:tree]
               %td

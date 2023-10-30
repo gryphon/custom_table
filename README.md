@@ -50,6 +50,7 @@ Use attribute name as key if possbile. Table will try to get most of options aut
 * ```sort``` controls sorting ability for the fields (disabled by default). Use ```true``` or ```{default_order: :asc|:desc}```
 * ```amount``` if true, applies number-specific formatting to cells (right align)
 * ```helper``` helper name (will be used instead default, see below)
+* ```total_scope``` scope which will be applied to collection to count total for rows. By defalt it takes sum(:field)
 
 ## Controller setup
 
