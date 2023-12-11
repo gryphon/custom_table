@@ -441,10 +441,30 @@ module CustomTable
     end
 
     def tree_opener item_id, has_children=false
-      content_tag :button, class: "btn btn-sm tree-opener", data: {action: (has_children ? "table#toggle" : ""), "table-css-param": ".child-of-#{item_id}"} do
+      content_tag :span, class: "tree-opener", data: {action: (has_children ? "click->table#toggle" : ""), "table-css-param": ".child-of-#{item_id}"} do
         concat content_tag(:span, (has_children ? "▶" : "▷"), class: "closed")
         concat content_tag(:span, "▼", class: "opened")
       end
+    end
+
+    def custom_table_fields_totals fields:, totals:, item:, fields_totals:, variant:
+      fields.each do |field, defs|
+        if !totals.nil? && totals.has_key?(field) && totals[field].nil? # Auto-counting
+          fields_totals[field] = 0 if fields_totals[field].nil?
+          fields_totals[field] += raw_field_value_for(item, field, definitions: defs, variant: variant).to_f rescue 0
+        end
+      end
+      return fields_totals
+    end
+
+    def custom_table_batch_selector_check_box item, **params
+
+      # abort params.inspect
+
+      params[:param] = "#{item.model_name.plural}[]" if params[:param].nil?
+      params[:data] = {"toggle-target": "checkbox", "batch-actions-target": "checkbox", "action": "toggle#recalculateToggler batch-actions#refresh"}
+
+      check_box_tag params[:param], item.id, (!params[item.model_name.plural.to_sym].blank?) && (params[item.model_name.plural.to_sym].include?(item.id.to_s)), params
     end
 
   end

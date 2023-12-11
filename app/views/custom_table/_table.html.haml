@@ -16,7 +16,11 @@
 
 - fields = fields.except(*local_assigns[:skip_fields]) if !local_assigns[:skip_fields].nil?
 
-%div.table-wrapper
+%div.table-wrapper{data: {controller: "batch-actions"}}
+
+  - if local_assigns[:batch_actions]
+    = self.send(local_assigns[:batch_actions])
+
   %table{class: ["search-fields", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table toggle"}}
     %thead.sticky
       - if local_assigns[:quick_filter]
@@ -35,7 +39,7 @@
 
         - if local_assigns[:with_select]
           %th.checkbox-col
-            = check_box_tag "check-all", "", true, data: {"toggle-target": "toggler", "action": "toggle#toggle"}
+            = check_box_tag "check-all", "", true, data: {"toggle-target": "toggler", "action": "toggle#toggle batch-actions#refresh"}
         - if local_assigns[:with_index]
           %th= "#"
         - fields.each do |field, defs|
@@ -94,10 +98,27 @@
           - Hash[grouped_collection.sort_by{|k,v| k.to_s}].each do |group, items|
 
             - if !group.nil?
+
+              -# Calculating group totals
+              - group_fields_totals = {}
+              - items.each do |item|
+                - custom_table_fields_totals(fields: fields, item: item, totals: totals, variant: variant, fields_totals: group_fields_totals)
+
               %tr
-                %th{colspan: "100%"}
-                  = tree_opener(group, true)
-                  = group
+                - shown = false
+                - fields.each do |field, defs|
+                  - next if defs[:table] == false
+                  - if !group_fields_totals[field].nil?
+                    %th{class: [field.to_s, "text-end"]}
+                      = amount_color group_fields_totals[field]
+                  - else
+                    %th{class: [field.to_s, "text-start"]}
+                      - if !shown
+                        = tree_opener(group, true)
+                        = group
+                        - shown = true
+                %th.text-end
+
 
             - items.each do |item|
               - position+=1
@@ -189,10 +210,14 @@
 
           %tr.totals{data: {"table-target": "move"}}
             - if local_assigns[:tree]
-              %td
+              %th
 
             - if local_assigns[:with_index]
               %th
+
+            - if local_assigns[:with_select]
+              %th
+
             - fields.each do |field, defs|
               - next if defs[:table] == false
               %th{class: [field.to_s, "text-end"]}

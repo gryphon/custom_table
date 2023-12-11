@@ -103,6 +103,7 @@ table {
 }
 
 .tree-opener {
+  cursor: pointer;
   .opened {
     display: none;
   }

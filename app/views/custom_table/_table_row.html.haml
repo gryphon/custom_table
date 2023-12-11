@@ -11,15 +11,23 @@
   - if local_assigns[:tree]
     %td
       - if item.parent_id.nil?
-        = tree_opener(item.id, local_assigns[:has_children])
+        - if local_assigns[:has_children]
+          = tree_opener(item.id, local_assigns[:has_children])
+      - else
+        = custom_table_icon(custom_table_tree_child_icon_class)
 
   - if local_assigns[:with_select]
     %td.checkbox-col
-      = self.send(local_assigns[:with_select], item, position)
+      - if local_assigns[:with_select].to_s == "true"
+        = check_box_tag "#{item.model_name.plural}[]", item.id, (!params[item.model_name.plural.to_sym].blank?) && (params[item.model_name.plural.to_sym].include?(item.id.to_s)), data: {"toggle-target": "checkbox", "batch-actions-target": "checkbox", "action": "toggle#recalculateToggler batch-actions#refresh"}
+      - else
+        = self.send(local_assigns[:with_select], item, position)
 
   - if local_assigns[:with_index]
     %td
       = position
+
+  - custom_table_fields_totals(fields: fields, item: item, totals: local_assigns[:totals], variant: variant, fields_totals: fields_totals)
 
   - fields.each do |field, defs|
     - next if defs[:table] == false
@@ -30,10 +38,6 @@
 
     %td{class: td_classes, id: dom_id(item, field)}
       - v = field_value_for(item, field, definitions: defs, variant: variant)
-
-      - if !local_assigns[:totals].nil? && local_assigns[:totals].has_key?(field) && local_assigns[:totals][field].nil? # Auto-counting
-        - fields_totals[field] = 0 if fields_totals[field].nil?
-        - fields_totals[field] += raw_field_value_for(item, field, definitions: defs, variant: variant).to_f rescue 0
 
       - if defs[:editable]
 

@@ -18,6 +18,11 @@ module CustomTable
       return "bi bi-arrow-down-up" if CustomTable.configuration.icons_framework == :bi
     end
 
+    def custom_table_tree_child_icon_class
+      return "fa fa-arrow-right" if CustomTable.configuration.icons_framework == :fa
+      return "bi bi-arrow-return-right" if CustomTable.configuration.icons_framework == :bi
+    end
+
     def custom_table_cancel_icon
       return custom_table_icon("fa fa-ban") if CustomTable.configuration.icons_framework == :fa
       return custom_table_icon("bi bi-slash-circle") if CustomTable.configuration.icons_framework == :bi
