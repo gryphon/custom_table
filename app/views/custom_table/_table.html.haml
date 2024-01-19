@@ -71,16 +71,18 @@
 
           - grouped_collection = collection.group_by{|i| i.parent_id}
 
-          - grouped_collection[nil].each do |parent_item|
+          - if !grouped_collection[nil].nil?
 
-            - childs = grouped_collection[parent_item.id] || []
-            
-            = render "custom_table/table_row", local_assigns.merge({item: parent_item, fields: fields, position: position, fields_totals: fields_totals, has_children: (childs.length > 0)})
-            - position+=1
+            - grouped_collection[nil].each do |parent_item|
 
-            - childs.each do |item|
+              - childs = grouped_collection[parent_item.id] || []
+              
+              = render "custom_table/table_row", local_assigns.merge({item: parent_item, fields: fields, position: position, fields_totals: fields_totals, has_children: (childs.length > 0)})
               - position+=1
-              = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals})
+
+              - childs.each do |item|
+                - position+=1
+                = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals})
 
       - elsif local_assigns[:group_by]
 
@@ -102,9 +104,10 @@
               -# Calculating group totals
               - group_fields_totals = {}
               - items.each do |item|
-                - custom_table_fields_totals(fields: fields, item: item, totals: totals, variant: variant, fields_totals: group_fields_totals)
+                - custom_table_fields_totals(fields: fields, item: item, totals: local_assigns[:totals], variant: variant, fields_totals: group_fields_totals)
 
               %tr
+
                 - shown = false
                 - fields.each do |field, defs|
                   - next if defs[:table] == false
@@ -114,11 +117,10 @@
                   - else
                     %th{class: [field.to_s, "text-start"]}
                       - if !shown
-                        = tree_opener(group, true)
+                        = tree_opener(group, true, local_assigns[:expanded])
                         = group
                         - shown = true
                 %th.text-end
-
 
             - items.each do |item|
               - position+=1
@@ -191,8 +193,8 @@
         -#             = custom_table_delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}"
 
       - if local_assigns.has_key?(:extra) && !extra.nil?
-        %tr
-          - extra.each do |er|
+        - extra.each do |er|
+          %tr
             - fields.each do |field, defs|
               - next if defs[:table] == false
               %td{class: [field.to_s]}
@@ -222,7 +224,10 @@
               - next if defs[:table] == false
               %th{class: [field.to_s, "text-end"]}
                 - if !found_totals[field].nil?
-                  = amount_color found_totals[field]
+                  - if found_totals[field].is_a?(Numeric)
+                    = amount_color found_totals[field]
+                  - else
+                    = found_totals[field]
             %th.text-end
 
 - if collection.respond_to? :total_pages

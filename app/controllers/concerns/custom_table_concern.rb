@@ -23,7 +23,7 @@ module CustomTableConcern
     customization = helpers.custom_table_user_customization_for(collection.model, variant)
     @q.sorts = customization&.dig(:sorts).presence || default_sorts if @q.sorts.empty?
 
-    collection = @q.result(distict: true)
+    collection = @q.result(distinct: true)
     # collection = collection.page(params[:page]).per(per_page) if format_web && paginate
 
     if !current_user.nil?
@@ -39,11 +39,11 @@ module CustomTableConcern
     filename ||= collection.model.model_name.plural
 
     format.xlsx do
-      if collection.count > 1000
-        redirect_to params.permit!.merge({:format => :html}), alert: t("custom_table.huge_xlsx_alert", csv: helpers.link_to(t("custom_table.download_as_csv"), params.permit!.merge({:format => :csv})))
-      else
+      # if collection.count > 1000
+        # redirect_to params.permit!.merge({:format => :html}), alert: t("custom_table.huge_xlsx_alert", csv: helpers.link_to(t("custom_table.download_as_csv"), params.permit!.merge({:format => :csv})))
+      # else
         response.headers['Content-Disposition'] = "attachment; filename=\"#{filename}.xlsx\""
-      end
+      # end
     end
 
     format.csv do

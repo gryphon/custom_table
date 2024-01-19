@@ -77,7 +77,7 @@ export default class extends Controller {
       if (!e.classList.contains("hide-empty")) return;
 
       let tds = this.element.querySelectorAll("tr td:nth-child(".concat(i+1, ")"));
-      if (Array.prototype.slice.call(tds).every(td => { return (td.textContent == "0" || !td.textContent || Number(td.textContent) == 0); })) {
+      if (Array.prototype.slice.call(tds).every(td => { return (td.parentElement.classList.contains("totals") || td.textContent == "0" || !td.textContent || Number(td.textContent) == 0); })) {
         e.hidden = true;
         tds.forEach(e => {e.hidden = true})
       }

@@ -2,10 +2,15 @@ global_model_name = collection.model.model_name.singular
 
 sheet.add_row []
 
-fields = custom_table_fields_definition_for(collection.model) 
-
-unless local_assigns[:fields].nil?
-  fields = fields.select { |k, _v| local_assigns[:fields].include?(k) }
+if local_assigns[:fields].nil?
+  fields = custom_table_fields_definition_for(collection.model) 
+else
+  d = custom_table_fields_definition_for(collection.model) 
+  fields = {}
+  local_assigns[:fields].each do |f|
+    found = d.find {|k, v| k == f }
+    fields[f] = found[1] if !found.nil?
+  end
 end
 
 if defined?(style)

@@ -1,0 +1,132 @@
+global_model_name = collection.model.model_name.singular
+
+if local_assigns[:fields].nil?
+  if params[:all_fields].to_s == "true"
+    fields = custom_table_fields_definition_for(collection.model, local_assigns[:variant])
+  else
+    fields = custom_table_fields_for(collection.model, variant: local_assigns[:variant], predefined_fields: local_assigns[:fields]) 
+  end
+else
+  fields = custom_table_fields_list_to_definitions(collection.model, fields)
+end
+
+data_start_row = sheet.last_row_number+1
+data_end_row = collection.length + data_start_row + 3
+
+if !local_assigns[:totals].nil?
+  data_start_row+=1
+  total_vals = []
+  total_format = workbook.number_format("#,##0.00").set(bold: true, align: {h: :right, v: :center})
+
+  i = 0
+  fields.each do |field, defs|
+    if totals.has_key?(field)
+      if total_vals.compact.length == 0 && total_vals.length > 0
+        total_vals[-1] = "Total:"
+      end
+      col = ("A".."Z").to_a[i]
+      if totals[field] == nil
+        total_vals.push FastExcel::Formula.new("SUM(#{col}#{data_start_row+2}:#{col}#{data_end_row})")
+      else
+        total_vals.push totals[field]
+      end
+    else
+      total_vals.push nil
+    end
+    i+=1
+  end
+  # abort total_vals.inspect
+  sheet.append_row(total_vals, total_format)
+  sheet.set_row(sheet.last_row_number, 20, nil)
+
+end
+
+
+head = []
+head_formats = []
+
+fields.each do |field, defs|
+  next if defs[:table] == false
+  head.push defs[:label].nil? ? collection.model.human_attribute_name(field) : defs[:label]
+
+  if local_assigns[:head_format].nil?
+    head_format = workbook.bold_format
+  else
+    head_format = sheet.workbook.add_format(local_assigns[:head_format])
+  end
+
+  if !local_assigns[:column_formats].nil? && !local_assigns[:column_formats][field.to_sym].nil?
+    head_format.set(local_assigns[:column_formats][field.to_sym])
+  end
+  head_formats.push(head_format)
+end
+
+fields.keys.each_with_index do |key, i|
+  w = 15
+  sheet.set_column(i, i, w)
+end
+
+if defined?(extra_head)
+  head += extra_head.call
+end
+
+# sheet.set_row(row_num = 1, 15, )
+sheet.append_row(head, head_formats)
+
+column_formats = {}
+
+iterator = "find_each" if local_assigns[:iterator].nil?
+
+collection.except(:limit, :offset).send(iterator) do |item|
+
+  row = []
+  formats = []
+
+  model_name = item.model_name.singular # Allows to show different class models in one table!
+
+  fields.each do |field, defs|
+    next if defs[:table] == false
+
+    value = raw_field_value_for(item, field)
+
+    if column_formats[field].nil?
+
+      if item.class.columns_hash[field.to_s] && item.class.columns_hash[field.to_s].type == :boolean
+        # Boolean
+        column_formats[field] = local_assigns[:generic_data_format]
+      elsif (defs[:type] == :date) || (item.class.columns_hash[field.to_s] && [:date, :datetime].include?(item.class.columns_hash[field.to_s].type))
+        value = value.to_date if !value.nil?
+        column_formats[field] = workbook.number_format("[$-409]dd/mm/yy;@").set(align: { h: :center })
+      elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)
+        column_formats[field] = workbook.number_format("#,##0.00") if (defs[:amount]!=false)
+      elsif [Date, ActiveSupport::TimeWithZone].include?(value.class)
+        value = value.to_date if !value.nil?
+        column_formats[field] = workbook.number_format("[$-409]dd/mm/yy;@").set(align: { h: :center })
+      elsif defs[:amount] || value.is_a?(Numeric)
+        column_formats[field] = workbook.number_format("#,##0.00")
+      else
+        column_formats[field] = local_assigns[:generic_data_format]
+      end
+
+      if !local_assigns[:column_formats].nil? && !local_assigns[:column_formats][field.to_sym].nil?
+        column_formats[field].set(local_assigns[:column_formats][field.to_sym])
+      end
+
+      # abort value.inspect if field.to_s == "credit"
+
+    end
+
+    formats.push column_formats[field]
+    row.push value
+  end
+
+  if defined?(extra_cols)
+    row += extra_cols.call(item)
+  end
+
+  sheet.append_row(row, formats)
+end
+
+if local_assigns[:autofilter]
+  sheet.autofilter(data_start_row, 0, sheet.last_row_number, fields.length-1)
+end

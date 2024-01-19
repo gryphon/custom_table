@@ -96,6 +96,9 @@ Options available are:
 * ```last_page``` set to false to disable last page count request for performance
 * ```quick_filter``` set to true to enable simple full-text client-side search
 * ```with_select``` allows to add checkboxes toggler. Pass helper name which has (item, position) as parameters
+* ```tree``` set to true if you have parent-child relation and you want to show records grouped by parent. Be sure to disable pagination as it will only group current page records 
+* ```group_by``` set to helper name to group records by result of it. Be sure to disable pagination as it will only group current page records 
+* ```expanded``` expand grouped or trees by default
 
 ## Rendering search panel
 

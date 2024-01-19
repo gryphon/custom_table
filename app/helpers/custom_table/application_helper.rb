@@ -202,7 +202,7 @@ module CustomTable
         elsif item.class.columns_hash[field.to_s] && [:integer].include?(item.class.columns_hash[field.to_s].type)
           return item.send(field) rescue nil
         else
-          return (item.send(field).presence).to_s rescue nil
+          return (item.send(field).presence) rescue nil
         end
       end
       
@@ -440,8 +440,8 @@ module CustomTable
       return []
     end
 
-    def tree_opener item_id, has_children=false
-      content_tag :span, class: "tree-opener", data: {action: (has_children ? "click->table#toggle" : ""), "table-css-param": ".child-of-#{item_id}"} do
+    def tree_opener item_id, has_children=false, expanded=false
+      content_tag :span, class: "tree-opener #{expanded ? 'opened' : ''}", data: {action: (has_children ? "click->table#toggle" : ""), "table-css-param": ".child-of-#{item_id}"} do
         concat content_tag(:span, (has_children ? "▶" : "▷"), class: "closed")
         concat content_tag(:span, "▼", class: "opened")
       end
@@ -465,6 +465,17 @@ module CustomTable
       params[:data] = {"toggle-target": "checkbox", "batch-actions-target": "checkbox", "action": "toggle#recalculateToggler batch-actions#refresh"}
 
       check_box_tag params[:param], item.id, (!params[item.model_name.plural.to_sym].blank?) && (params[item.model_name.plural.to_sym].include?(item.id.to_s)), params
+    end
+
+    # Gets array of fields and results in object of available fields and definitions from fields from list
+    def custom_table_fields_list_to_definitions model, fields
+      d = custom_table_fields_definition_for(model) 
+      out = {}
+      fields.each do |f|
+        found = d.find {|k, v| k == f }
+        out[f] = found[1] if !found.nil?
+      end
+      return out
     end
 
   end

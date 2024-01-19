@@ -15,3 +15,4 @@ en:
     download_as_csv: Download as CSV
     huge_xlsx_alert: Too many records to download in Excel format. Try %{csv}
     quick_search: Quick Search
+    download_only_selected_fields: Download selected columns only

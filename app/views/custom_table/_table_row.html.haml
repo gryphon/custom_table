@@ -3,8 +3,9 @@
 -# = render partial: "custom_tables/table_row", locals: local_assigns.merge(item: item, position: position, fields: fields, fields_totals: fields_totals)
 - row_class_helper = local_assigns[:row_class] || "#{model_name}_row_class"
 - row_class = [(self.send(row_class_helper, item) rescue "")]
-- row_class += ["child-of-#{item.parent_id}", "d-none"] if local_assigns[:tree] && !item.parent_id.nil?
-- row_class += ["child-of-#{local_assigns[:grouped_by_id]}", "d-none"] if local_assigns[:grouped_by_id] 
+
+- row_class += ["child-of-#{item.parent_id}", (local_assigns[:expanded] ? "" : "d-none")] if local_assigns[:tree] && !item.parent_id.nil?
+- row_class += ["child-of-#{local_assigns[:grouped_by_id]}", (local_assigns[:expanded] ? "" : "d-none")] if local_assigns[:grouped_by_id] 
 
 %tr{id: dom_id(item, "row"), :class => row_class}
 
@@ -12,7 +13,7 @@
     %td
       - if item.parent_id.nil?
         - if local_assigns[:has_children]
-          = tree_opener(item.id, local_assigns[:has_children])
+          = tree_opener(item.id, local_assigns[:has_children], local_assigns[:expanded])
       - else
         = custom_table_icon(custom_table_tree_child_icon_class)
 

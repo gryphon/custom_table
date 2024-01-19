@@ -1,14 +1,19 @@
 - model_class = local_assigns[:collection].nil? ? local_assigns[:class] : local_assigns[:collection].model
+- local_assigns[:with_selected_fields] = true if local_assigns[:with_selected_fields].nil?
 - if (model_class.present? && can?(:download, model_class))
   .btn-group
-    = link_to params.permit!.merge({:format => :xlsx}), :class => "btn btn-outline-primary" do
+    = link_to params.permit!.merge({:format => :xlsx, all_fields: true}), :class => "btn btn-outline-primary" do
       = t("download")
       = custom_table_download_icon
 
-    - if local_assigns[:downloads] && downloads.length > 0
+    - if (local_assigns[:downloads] && downloads.length > 0) || (local_assigns[:with_selected_fields] == true)
 
       %button.btn.btn-outline-primary.dropdown-toggle{type: "button", data: {"bs-toggle": "dropdown"}}
       %ul.dropdown-menu
+        - if local_assigns[:with_selected_fields] == true
+          %li
+            = link_to params.permit!.merge({:format => :xlsx}), :class => "dropdown-item" do
+              = t("custom_table.download_only_selected_fields")
         - downloads.each do |d|
           %li
             = link_to d[:title], d[:href], class: "dropdown-item"

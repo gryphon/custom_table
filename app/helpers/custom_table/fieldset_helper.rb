@@ -38,7 +38,8 @@ module CustomTable
         @template.render "custom_table/#{params[:template]}", **params do
           if params[:editable] && has_editable?
             params[:editable_params] = {} if params[:editable_params].nil?
-            @template.editable @object, column, **params[:editable_params] do
+            editable_field = params[:editable_params][:field] || column
+            @template.editable @object, editable_field, **params[:editable_params] do
               if block_given?
                 yield
               else

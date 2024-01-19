@@ -15,4 +15,4 @@ ru:
     download_as_csv: Скачать в CSV
     huge_xlsx_alert: Слишком много записей для экспорта в формате Excel. Попробуйте %{csv}
     quick_search: Быстрый поиск
-
+    download_only_selected_fields: Скачать только выбранные колонки
