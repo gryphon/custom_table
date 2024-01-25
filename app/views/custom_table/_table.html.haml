@@ -104,10 +104,8 @@
               -# Calculating group totals
               - group_fields_totals = {}
               - items.each do |item|
-                - custom_table_fields_totals(fields: fields, item: item, totals: local_assigns[:totals], variant: variant, fields_totals: group_fields_totals)
-
+                - custom_table_fields_totals(fields: fields, item: item, totals: totals, variant: variant, fields_totals: group_fields_totals)
               %tr
-
                 - shown = false
                 - fields.each do |field, defs|
                   - next if defs[:table] == false

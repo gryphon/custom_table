@@ -93,15 +93,6 @@ table {
   }
 }
 
-.custom-table-field {
-  box-sizing: border-box;
-  margin-bottom: 5px !important;
-  &:hover {
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 4px !important;
-  }
-}
-
 .tree-opener {
   cursor: pointer;
   .opened {

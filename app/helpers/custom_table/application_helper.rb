@@ -479,4 +479,5 @@ module CustomTable
     end
 
   end
+  
 end
