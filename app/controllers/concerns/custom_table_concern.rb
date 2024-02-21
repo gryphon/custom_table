@@ -18,7 +18,7 @@ module CustomTableConcern
   def custom_table collection, variant = nil, default_sorts: "created_at desc", default_search: {}
 
     @q = collection.ransack(params[:q])
-    @q = collection.ransack((params[:q] || {}).merge(default_search)) if @q.conditions.empty?
+    @q = collection.ransack((params[:q] || {}).merge(default_search)) if params[:q].nil?
 
     customization = helpers.custom_table_user_customization_for(collection.model, variant)
     @q.sorts = customization&.dig(:sorts).presence || default_sorts if @q.sorts.empty?
@@ -28,7 +28,9 @@ module CustomTableConcern
 
     if !current_user.nil?
       current_user.save_custom_table_settings(collection.model, variant, per_page: params[:per]) if !params[:per].nil? && params[:do_not_save_settings].nil?
-      current_user.save_custom_table_settings(collection.model, variant, sorts: "#{@q.sorts[0].name} #{@q.sorts[0].dir}") if !params[:q].nil? && !params[:q][:s].nil? && !@q.nil? && !@q.sorts[0].nil? && !@q.sorts[0].name.nil? && params[:do_not_save_settings].nil?
+      if !params[:q].nil? && !params[:q][:s].nil? && !@q.nil? && !@q.sorts[0].nil? && !@q.sorts[0].name.nil? && params[:do_not_save_settings].nil?
+        current_user.save_custom_table_settings(collection.model, variant, sorts: "#{@q.sorts[0].name} #{@q.sorts[0].dir}")
+      end
     end
 
     return collection

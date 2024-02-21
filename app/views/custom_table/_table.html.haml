@@ -2,6 +2,8 @@
 - global_model_name = model_class.model_name.singular
 - fields_totals = {}
 - variant = local_assigns[:variant]
+- if local_assigns[:tree] && local_assigns[:paginate]
+  %p.text-danger Tree mode is incompartible with pagination
 
 - if collection.respond_to?(:model)
   - customization = custom_table_user_customization_for(collection.model, variant)
@@ -97,12 +99,17 @@
 
           -# - abort Hash[grouped_collection.sort_by{|k,v| k.to_s}].inspect
 
+          - group_id = 0
+
           - Hash[grouped_collection.sort_by{|k,v| k.to_s}].each do |group, items|
 
             - if !group.nil?
 
+              - group_id += 1
+
               -# Calculating group totals
               - group_fields_totals = {}
+
               - items.each do |item|
                 - custom_table_fields_totals(fields: fields, item: item, totals: totals, variant: variant, fields_totals: group_fields_totals)
               %tr
@@ -115,14 +122,15 @@
                   - else
                     %th{class: [field.to_s, "text-start"]}
                       - if !shown
-                        = tree_opener(group, true, local_assigns[:expanded])
+                        = tree_opener(group_id, true, local_assigns[:expanded])
                         = group
                         - shown = true
-                %th.text-end
+                - if !local_assigns[:skip_actions]
+                  %th.text-end
 
             - items.each do |item|
               - position+=1
-              = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals, grouped_by_id: group})
+              = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals, grouped_by_id: group_id})
 
       - else
 

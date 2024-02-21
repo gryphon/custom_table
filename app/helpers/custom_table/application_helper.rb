@@ -70,7 +70,7 @@ module CustomTable
 
       helpers.each do |helper|
         if self.class.method_defined?(helper)
-          if self.method(helper).arity == 1
+          if self.method(helper).arity == 1 || self.method(helper).arity == -2
             return self.send(helper, item) || not_set 
           end
           if self.method(helper).arity == 2

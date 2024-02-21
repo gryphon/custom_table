@@ -40,6 +40,9 @@ module CustomTable
 
       if current_user.save_custom_table_settings(model, variant, fields: p[:fields])
         flash[:notice] = t("custom_table.customization_saved")
+        respond_to do |format|
+          format.turbo_stream {render turbo_stream: turbo_stream.action(:refresh, nil)}
+        end
       else
         # optional_redirect_to main_app.root_path, alert: t("custom_table.cannot_save_customization")
       end
@@ -62,6 +65,9 @@ module CustomTable
 
       if current_user.destroy_custom_table_settings(model, variant)
         flash[:notice] = t("custom_table.customization_saved")
+        respond_to do |format|
+          format.turbo_stream {render turbo_stream: turbo_stream.action(:refresh, nil)}
+        end
       else
         # optional_redirect_to main_app.root_path, alert: t("custom_table.cannot_save_customization")
       end

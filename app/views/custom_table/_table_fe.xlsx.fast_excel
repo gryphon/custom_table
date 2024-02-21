@@ -127,6 +127,15 @@ collection.except(:limit, :offset).send(iterator) do |item|
   sheet.append_row(row, formats)
 end
 
+ef = workbook.add_format(top: :medium)
+row = []
+fields.each do |field, defs|
+  next if defs[:table] == false
+  row.push nil
+end
+sheet.append_row(row, ef)
+
+
 if local_assigns[:autofilter]
   sheet.autofilter(data_start_row, 0, sheet.last_row_number, fields.length-1)
 end
