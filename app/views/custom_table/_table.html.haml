@@ -23,7 +23,7 @@
   - if local_assigns[:batch_actions]
     = self.send(local_assigns[:batch_actions])
 
-  %table{class: ["search-fields", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table toggle"}}
+  %table{class: ["search-fields", "custom-table", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table toggle"}}
     %thead.sticky
       - if local_assigns[:quick_filter]
         %tr
@@ -111,7 +111,7 @@
               - group_fields_totals = {}
 
               - items.each do |item|
-                - custom_table_fields_totals(fields: fields, item: item, totals: totals, variant: variant, fields_totals: group_fields_totals)
+                - custom_table_fields_totals(fields: fields, item: item, totals: local_assigns[:totals], variant: variant, fields_totals: group_fields_totals)
               %tr
                 - shown = false
                 - fields.each do |field, defs|

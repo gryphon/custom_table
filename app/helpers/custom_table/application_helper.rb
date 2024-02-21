@@ -14,7 +14,7 @@ module CustomTable
       options[:method] = :get
   
       options[:html] ||= {} 
-      options[:html][:class] = "row row-cols-md-auto g-3 align-items-center search-fields-filter"
+      options[:html][:class] = "row row-cols-md-auto g-3 align-items-center custom-table-filter"
       options[:wrapper] = options[:wrapper] || :inline_form
   
       options[:wrapper_mappings] = {

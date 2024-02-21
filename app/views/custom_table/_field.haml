@@ -1,4 +1,8 @@
 %div.d-flex.justify-content-between.custom-table-field
-  %b= label
+  %b
+    - if local_assigns[:hint]
+      %abbr{title: hint}= label
+    - else
+      = label
   %span.text-end.d-inline{id: "#{column}_#{object.model_name.singular}_#{object.id}"}= yield
 -# %dt{class: adaptive ? "col-lg-2 col-md-5" : "col-5"}= label

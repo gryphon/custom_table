@@ -35,6 +35,11 @@ module CustomTable
         params[:column] = column
         params[:object] = @object
 
+        hint_key = "simple_form.hints.#{@object.model_name.singular}.#{column}"
+        if I18n.exists?(hint_key)
+          params[:hint] = I18n.t(hint_key)
+        end
+
         @template.render "custom_table/#{params[:template]}", **params do
           if params[:editable] && has_editable?
             params[:editable_params] = {} if params[:editable_params].nil?

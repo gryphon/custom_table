@@ -1,28 +1,5 @@
-.search-fields-filter {
-  // .form-group {
-  //   margin-bottom: 0;
-  // }
 
-  // .dates .form-group {
-  //   width: 50%;
-  //   margin-left: 0;
-  //   margin-right: 0;
-  //   float:left;
-  // }
-  // input.boolean {
-  //   margin-top: -5px;
-  //   margin-bottom: 0;
-  //   margin-left: -15px;
-  //   margin-right: 5px;
-  // }
-  // label.boolean {
-  //   margin-top: 5px;
-  //   margin-bottom: 0;
-  //   white-space: nowrap;
-  // }
-}
-
-table {
+table.custom-table {
 
   td.actions {
     white-space: nowrap;
@@ -35,49 +12,32 @@ table {
   td.selected {
     border: 2px solid rgb(26, 179, 26) !important;
   }
-}
 
-.table-sum {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  width: 150px;
-  background: white;
-  border: 2px solid black;
-  padding: 2px;
-  text-align: right;
-  margin-right: 5px;
-  z-index: 1000;
-}
+  tr {
+    .action {
+      visibility: hidden;
+      &.btn-sm {
+        padding: 2px 4px !important;
+      }
+    }
+    .d-action-none {
+      display: none;
+    }
 
-.widget table.search-fields td {
-  max-width: 120px;
-  overflow: hidden;
-}
 
-table tr, li.list-group-item {
-  .action {
-    visibility: hidden;
-  }
-  .d-action-none {
-    display: none;
-  }
-}
-table tr, li.list-group-item {
-  // .btn-sm {
-  //   padding: 0rem 0.25rem;
-  // }
-}
-table tr:hover, li.list-group-item:hover {
-  .action {
-    visibility: visible;
-  }
-  .d-action-none {
-    display: inherit;
-  }
-}
+    &:hover {
+      .action {
+        visibility: visible;
+      }
+      .d-action-none {
+        display: inherit;
+      }
+    }
 
-table {
+  }
+
+
+
   tr.sticky, thead.sticky {
     position: sticky;
     background: white;
@@ -91,19 +51,39 @@ table {
   .text-sm {
     font-size: 11px;
   }
-}
 
-.tree-opener {
-  cursor: pointer;
-  .opened {
-    display: none;
-  }
-  &.opened {
+  .tree-opener {
+    cursor: pointer;
     .opened {
-      display: inline;
-    }
-    .closed {
       display: none;
     }
+    &.opened {
+      .opened {
+        display: inline;
+      }
+      .closed {
+        display: none;
+      }
+    }
   }
+  
+  .table-sum {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 150px;
+    background: white;
+    border: 2px solid black;
+    padding: 2px;
+    text-align: right;
+    margin-right: 5px;
+    z-index: 1000;
+  }
+
+}
+
+
+.widget table.custom-table td {
+  max-width: 120px;
+  overflow: hidden;
 }
