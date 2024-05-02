@@ -133,9 +133,9 @@ module CustomTable
               # We can try to sum value from database
 
               if fields[field][:total_scope].nil?
-                out[field] = collection.except(:limit, :offset, :order, :group).sum(field)
-              else 
-                out[field] = collection.except(:limit, :offset, :order, :group).send(fields[field][:total_scope])
+                out[field] = collection.except(:limit, :offset, :order, :group).distinct(false).sum(field)
+              else
+                out[field] = collection.except(:limit, :offset, :order, :group).distinct(false).send(fields[field][:total_scope])
               end
             else
               # Taking simple summed value because all data is shown
