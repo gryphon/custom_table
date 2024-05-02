@@ -14,15 +14,15 @@ module CustomTable
       options[:method] = :get
   
       options[:html] ||= {} 
-      options[:html][:class] = "row row-cols-md-auto g-3 align-items-center custom-table-filter"
-      options[:wrapper] = options[:wrapper] || :inline_form
+      options[:html][:class] = "row row-cols-sm-auto g-3 align-items-center custom-table-filter"
+      options[:wrapper] = options[:wrapper] || :ct_inline_form
   
       options[:wrapper_mappings] = {
-        boolean: :inline_boolean,
-        check_boxes: :vertical_collection,
-        radio_buttons: :vertical_collection,
-        date: :inline_element,
-        select: :inline_select
+        boolean: :ct_inline_boolean,
+        check_boxes: :ct_vertical_collection,
+        radio_buttons: :ct_vertical_collection,
+        date: :ct_inline_element,
+        select: :ct_inline_select
       }
 
       simple_form_for(record, options, &block)
@@ -79,11 +79,14 @@ module CustomTable
         end
       end
   
-      if !defs.nil? && defs[:amount] == true
+      if !defs.nil? && defs[:amount]
+        val = item.send(field) rescue nil
+        return not_set if val.nil?
         if !item.class.columns_hash[field.to_s].nil? && item.class.columns_hash[field.to_s].type == :integer
-          return amount_value(item.send(field), 0) rescue ""
+          # Integer only
+          return amount_value(val, 0) rescue ""
         else
-          return amount(item.send(field)) rescue ""
+          return amount(val) rescue ""
         end
       else
         if item.class.reflect_on_association(field)

@@ -1,6 +1,6 @@
-.card
+%div{class: CustomTable.configuration.filter_outer_wrapper_class}
 
-  .card-body.bg-light
+  %div{class: CustomTable.configuration.filter_inner_wrapper_class}
 
     - url = local_assigns[:url].presence
     - variant = local_assigns[:variant].presence
@@ -13,6 +13,10 @@
         = f.input :s, as: :hidden, input_html: {value: params[:q].try(:[], :s)}
 
       - fields = custom_table_fields_for(search_model, variant: variant, current_search: params[:q], predefined_fields: local_assigns[:fields]) if local_assigns[:fields].nil?
+      - has_unset_fields = false
+
+      - if CustomTable.configuration.show_search_icon
+        = custom_table_icon([custom_table_search_icon_class, "pe-0", "d-none", "d-md-inline"])
 
       - fields.each do |key, defs|
 
@@ -29,20 +33,24 @@
           - a[key].push field[:q]
           - label = field[:label] || defs[:label]
 
+          - has_value = params[:q] && field[:q] && params[:q][field[:q].to_s].present?
+          - hvh = {wrapper_html: {class: (has_value ? "has-value" : "")}}
+          - has_unset_fields = true if !has_value
+
           - if field[:type] == :text
 
             - ih = {class: "form-control-sm"}
             - ih = ih.merge(defs[:input_html]) if !defs[:input_html].nil?
 
-            = f.input field[:q], input_html: ih, required: false, label: false, placeholder: label
+            = f.input field[:q], input_html: ih, required: false, label: false, placeholder: label, **hvh
 
           - if field[:type] == :boolean
 
-            = f.input field[:q], as: :boolean, input_html: {}, required: false, label: label, unchecked_value: ""
+            = f.input field[:q], as: :boolean, input_html: {}, required: false, label: label, unchecked_value: "", **hvh
 
           - if field[:type] == :switch
 
-            = f.input field[:q], as: :select, input_html: {:class => "form-select form-select-sm"}, required: false, label: false, :collection => [[t("yes")+" | #{label}", "true"], [t("no")+" | #{label}", "false"]], include_blank: label
+            = f.input field[:q], as: :select, input_html: {:class => "form-select form-select-sm"}, required: false, label: false, :collection => [[t("yes")+" | #{label}", "true"], [t("no")+" | #{label}", "false"]], include_blank: label, **hvh
 
           - if field[:type] == :select
 
@@ -53,7 +61,7 @@
               - collection = collection.accessible_by(current_ability) 
               - label_method = :to_s
 
-            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => collection, label_method: label_method, include_blank: label, value_method: field[:value_method]
+            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => collection, label_method: label_method, include_blank: label, value_method: field[:value_method], **hvh
 
           - if field[:type] == :grouped_select
 
@@ -61,7 +69,7 @@
 
             - collection = collection.accessible_by(current_ability) if collection.class.to_s =~ /ActiveRecord_Relation/i
 
-            = f.input field[:q], :as => :grouped_select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, group_method: field[:group_method], :collection => collection, include_blank: label
+            = f.input field[:q], :as => :grouped_select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, group_method: field[:group_method], :collection => collection, include_blank: label, **hvh
 
           - if field[:type] == :autocomplete
 
@@ -69,7 +77,7 @@
 
             - collection = collection.accessible_by(current_ability) if collection.class.to_s =~ /ActiveRecord_Relation/i
 
-            = f.input field[:q], :as => :autocomplete, :input_html => {:class => "input-sm"}, :required => false, :label => false, :collection => collection, prompt: label
+            = f.input field[:q], :as => :autocomplete, :input_html => {:class => "input-sm"}, :required => false, :label => false, :collection => collection, prompt: label, **hvh
 
           - if field[:type] == :enum
 
@@ -77,10 +85,10 @@
             - collection = [search_model, key.to_s.pluralize] if collection.nil?
             - coll = collection[0].send(collection[1]).keys.map { |w| [(collection[0].method_defined?(:human_enum_name) ? collection[0].human_enum_name(collection[1].to_s.singularize, w) : w), w] }
 
-            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => coll, include_blank: label
+            = f.input field[:q], :as => :select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, :collection => coll, include_blank: label, **hvh
 
           - if field[:type] == :dates
-            .col-12
+            .col-6{class: (has_value ? "has-value" : "")}
               .input-group.input-group-sm{"data-controller": "dates"}
                 = f.input_field field[:q][0], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateFrom"}, :placeholder => label+" ("+t("custom_table.date_from")+")"
                 = f.input_field field[:q][1], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateTo"}, :placeholder => label+" ("+t("custom_table.date_to")+")"
@@ -94,6 +102,8 @@
 
       .btn-group
         = f.button :submit, t("search"), name: "", :class => "btn-sm btn-primary"
+        - if has_unset_fields
+          %button.d-md-none.btn.btn-sm.btn-outline-primary{onclick: "closest('form').classList.add('show-all'); return false"}= t("custom_table.show_all_filters")
         - if user_signed_in? && current_user_has_customizable_fields_for?(search_model, variant) && !local_assigns[:hide_customization] && !local_assigns[:fields]# && !(profile_path rescue nil).nil?
           = custom_table_settings_button search_model, variant
         - if params[:q].present? && !params[:q].except(:s).empty?

@@ -16,3 +16,4 @@ en:
     huge_xlsx_alert: Too many records to download in Excel format. Try %{csv}
     quick_search: Quick Search
     download_only_selected_fields: Download selected columns only
+    show_all_filters: Show all filters

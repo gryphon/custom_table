@@ -10,7 +10,7 @@ table.custom-table {
     white-space: nowrap;
   }
   td.selected {
-    border: 2px solid rgb(26, 179, 26) !important;
+    outline: 2px solid rgb(26, 179, 26) !important;
   }
 
   tr {
@@ -86,4 +86,18 @@ table.custom-table {
 .widget table.custom-table td {
   max-width: 120px;
   overflow: hidden;
+}
+
+
+@include media-breakpoint-down(md) {
+  .custom-table-filter {
+    > :not(.has-value, .btn-group) {
+      display: none;
+    }
+    &.show-all {
+      > :not(.has-value, .btn-group) {
+        display: block;
+      }
+    }
+  }
 }

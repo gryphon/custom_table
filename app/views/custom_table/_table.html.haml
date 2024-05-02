@@ -18,7 +18,7 @@
 
 - fields = fields.except(*local_assigns[:skip_fields]) if !local_assigns[:skip_fields].nil?
 
-%div.table-wrapper{data: {controller: "batch-actions"}}
+%div.table-wrapper.overflow-x-scroll{data: {controller: "batch-actions"}}
 
   - if local_assigns[:batch_actions]
     = self.send(local_assigns[:batch_actions])
@@ -121,21 +121,28 @@
               - items.each do |item|
                 - custom_table_fields_totals(fields: fields, item: item, totals: local_assigns[:totals], variant: variant, fields_totals: group_fields_totals)
               %tr
-                - shown = false
-                - fields.each do |field, defs|
-                  - next if defs[:table] == false
-                  - if !group_fields_totals[field].nil?
-                    %th{class: [field.to_s, "text-end"]}
-                      = amount_color group_fields_totals[field]
-                  - else
-                    %th.nowrap{class: [field.to_s, "text-start"]}
-                      - if !shown
-                        = tree_opener(group_id, true, local_assigns[:expanded])
-                        = group
-                        - shown = true
+                - if group_fields_totals.values.empty?
+                  %th{class: ["text-start", "text-nowrap"], colspan: fields.length}
+                    = tree_opener(group_id, true, local_assigns[:expanded])
+                    = group.to_s
+                - else
+                  - shown = false
+                  - fields.each do |field, defs|
+                    - next if defs[:table] == false
+                    - if !group_fields_totals[field].nil?
+                      %th{class: [field.to_s, "text-end"]}
+                        = amount_color group_fields_totals[field]
+                    - else
+                      %th{class: [field.to_s, "text-start"]}
+                        - if !shown
+                          %span.text-nowrap
+                            = tree_opener(group_id, true, local_assigns[:expanded])
+                            = group
+                          - shown = true
                 - if !local_assigns[:skip_actions]
                   %th.text-end
-
+                    - if !local_assigns[:group_actions].nil?
+                      = self.send(local_assigns[:group_actions], group)
             - items.each do |item|
               - position+=1
               = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals, grouped_by_id: group_id})
@@ -217,14 +224,15 @@
 
       - if collection.length == 0
         %tr.warning.text-center
-          %th{:colspan=>"100%"}= t("custom_table.no_records_found")
+          %th{:colspan=>"100%"}
+            = local_assigns[:no_records_message] || t("custom_table.no_records_found")
       - else
 
         - found_totals = custom_table_totals(collection, fields, local_assigns[:totals], fields_totals)
 
         - if !found_totals.empty?
 
-          %tr.totals{data: {"table-target": "move"}}
+          %tr.totals{data: ((CustomTable.configuration.move_totals_top || local_assigns[:move_totals_top]) ? {"table-target": "move"} : {})}
             - if local_assigns[:tree]
               %th
 

@@ -18,7 +18,8 @@
         - if local_assigns[:has_children]
           = tree_opener(item.id, local_assigns[:has_children], local_assigns[:expanded])
       - else
-        = custom_table_icon(custom_table_tree_child_icon_class)
+        %span.ms-2
+          = custom_table_icon(custom_table_tree_child_icon_class)
 
   - if local_assigns[:sortable]
     %td

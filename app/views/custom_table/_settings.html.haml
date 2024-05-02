@@ -19,7 +19,7 @@
           - if !variant.nil?
             %small= "(#{variant})"
 
-        %button.btn-close(type="button" data-bs-dismiss="modal" aria-label="close")
+        %button.btn-close(type="button" data-action="remote-modal#close" aria-label="close")
       .modal-body
 
         = turbo_frame_tag "custom-table-settings" do
