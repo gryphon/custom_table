@@ -79,7 +79,7 @@ module CustomTable
         end
       end
   
-      if !defs.nil? && defs[:amount]
+      if !defs.nil? && defs[:amount] == true
         if !item.class.columns_hash[field.to_s].nil? && item.class.columns_hash[field.to_s].type == :integer
           return amount_value(item.send(field), 0) rescue ""
         else
@@ -97,9 +97,15 @@ module CustomTable
           return (item.send(field).blank? ? not_set : l(item.send(field), format: :short)) rescue ""
         elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)
           return not_set if (item.send(field) rescue nil).nil?
+          return item.send(field) if !defs.nil? && defs[:amount] === false # Showing simple output if amount is false
           return amount(item.send(field)) rescue ""
         else
-          return (item.send(field).presence || not_set).to_s rescue ""
+          # Non-column attribute
+          v = (item.send(field).presence || not_set) rescue nil
+          if !defs.nil? && !defs[:type].nil?
+            return date_value(v) if [:date, :datetime].include?(defs[:type])
+          end
+          return v.to_s
         end
       end
       
@@ -330,7 +336,9 @@ module CustomTable
   
     # Base definition for model
     def custom_table_fields_definition_for_field(model, field, variant = nil)
+
       helper_name = "#{model.model_name.singular}_custom_table_fields"
+
       if (! self.class.method_defined?(helper_name))
         raise "#{helper_name} helper is not defined so we do not know how to render custom_table for #{model}"
       end
@@ -340,6 +348,7 @@ module CustomTable
         defs = self.send("#{helper_name}", variant)
       end
       return nil if defs[field].nil?
+      defs = defs[field]
       defs[:label] = model.human_attribute_name(field) if defs[:label].nil?
       return defs
     end
@@ -358,7 +367,6 @@ module CustomTable
       params[:paginate] = true if params[:paginate]!=false
       params[:last_page] = true if params[:last_page]!=false
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
-      params[:force_edit_button] = false if params[:force_edit_button].nil?
       params[:modal_edit] = true if params[:modal_edit].nil?
       
       render "custom_table/table", params do

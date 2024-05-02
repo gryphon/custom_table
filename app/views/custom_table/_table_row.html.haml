@@ -7,7 +7,10 @@
 - row_class += ["child-of-#{item.parent_id}", (local_assigns[:expanded] ? "" : "d-none")] if local_assigns[:tree] && !item.parent_id.nil?
 - row_class += ["child-of-#{local_assigns[:grouped_by_id]}", (local_assigns[:expanded] ? "" : "d-none")] if local_assigns[:grouped_by_id] 
 
-%tr{id: dom_id(item, "row"), :class => row_class}
+- tr_data = {}
+- if local_assigns[:sortable]
+  - tr_data["sortable-update-url"] = url_for(item)
+%tr{id: dom_id(item, "row"), :class => row_class, data: tr_data }
 
   - if local_assigns[:tree]
     %td
@@ -16,6 +19,10 @@
           = tree_opener(item.id, local_assigns[:has_children], local_assigns[:expanded])
       - else
         = custom_table_icon(custom_table_tree_child_icon_class)
+
+  - if local_assigns[:sortable]
+    %td
+      %i.fa.fa-grip-vertical.sort-handler.me-2
 
   - if local_assigns[:with_select]
     %td.checkbox-col
@@ -40,7 +47,10 @@
     %td{class: td_classes, id: dom_id(item, field)}
       - v = field_value_for(item, field, definitions: defs, variant: variant)
 
-      - if defs[:editable]
+      - editable_enabled = defs[:editable]
+      - editable_enabled = editable_enabled.call(item) if editable_enabled.respond_to?(:call)
+
+      - if editable_enabled
 
         = editable item, field do
           - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
@@ -65,7 +75,8 @@
       - elsif self.class.method_defined?("#{model_name}_custom_table_actions")
         = self.send("#{model_name}_custom_table_actions", item)
       - if local_assigns[:skip_default_actions].nil?
-        - if (!custom_table_has_show_route?(item) || local_assigns[:force_edit_button]) && can?(:update, item)
+        - local_assigns[:force_edit_button] = true if local_assigns[:force_edit_button].nil? && !custom_table_has_show_route?(item)
+        - if (local_assigns[:force_edit_button]) && can?(:update, item)
           = custom_table_edit_button [:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}", modal: local_assigns[:modal_edit]
         - if can? :destroy, item
           - if (Rails.application.routes.recognize_path(url_for([namespace, local_assigns[:parent], item]), :method => :delete) rescue false)

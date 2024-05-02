@@ -99,6 +99,7 @@ Options available are:
 * ```tree``` set to true if you have parent-child relation and you want to show records grouped by parent. Be sure to disable pagination as it will only group current page records 
 * ```group_by``` set to helper name to group records by result of it. Be sure to disable pagination as it will only group current page records 
 * ```expanded``` expand grouped or trees by default
+* ```sortable``` set to true to allow to sort models. Model needs to have ```position``` attribute and use ```acts_as_list``` gem to be sorted. Gem uses ```stimulus-sortable``` JS package for sorting
 
 ## Rendering search panel
 

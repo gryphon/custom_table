@@ -39,6 +39,9 @@
         - if local_assigns[:tree]
           %th{style: "width: 15px;"}
 
+        - if local_assigns[:sortable]
+          %th{style: "width: 15px;"}
+
         - if local_assigns[:with_select]
           %th.checkbox-col
             = check_box_tag "check-all", "", true, data: {"toggle-target": "toggler", "action": "toggle#toggle batch-actions#refresh"}
@@ -63,7 +66,12 @@
         - if !local_assigns[:skip_actions]
           %th.text-end
 
-    %tbody
+    - table_data_tag = {}
+    - table_data_tag["controller"] = "sortable"
+    - table_data_tag["sortable-resource-name-value"] = model_class.model_name.singular
+    - table_data_tag["sortable-handle-value"] = ".sort-handler"
+
+    %tbody{data: table_data_tag}
 
       - position = 0
 
@@ -120,7 +128,7 @@
                     %th{class: [field.to_s, "text-end"]}
                       = amount_color group_fields_totals[field]
                   - else
-                    %th{class: [field.to_s, "text-start"]}
+                    %th.nowrap{class: [field.to_s, "text-start"]}
                       - if !shown
                         = tree_opener(group_id, true, local_assigns[:expanded])
                         = group
@@ -222,6 +230,9 @@
 
             - if local_assigns[:with_index]
               %th
+
+            - if local_assigns[:sortable]
+              %td
 
             - if local_assigns[:with_select]
               %th

@@ -16,7 +16,7 @@ module CustomTable
 
       def field column, **params, &block
 
-        defs = custom_table_fields_definition_for_field(@object.class, column) rescue nil
+        defs = @template.custom_table_fields_definition_for_field(@object.class, column) rescue nil
 
         params = {} if params.nil?
         params = params.deep_merge(@params)
@@ -25,11 +25,12 @@ module CustomTable
 
         if params[:label].nil?
           if !defs.nil? && !defs[:label].blank?
-            params[:label] = defs[:label].nil?
+            params[:label] = defs[:label]
           else
             params[:label] = @object.class.human_attribute_name(column) 
           end
         end
+
 
         params[:template] = "field" if params[:template].nil?
         params[:column] = column
@@ -48,14 +49,14 @@ module CustomTable
               if block_given?
                 yield
               else
-                @template.field_value_for(@object, column)
+                @template.field_value_for(@object, column, definitions: defs)
               end
             end
           else
             if block_given?
               yield
             else
-              @template.field_value_for(@object, column)
+              @template.field_value_for(@object, column, definitions: defs)
             end
           end
 
