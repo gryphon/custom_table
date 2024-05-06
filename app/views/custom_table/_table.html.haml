@@ -18,7 +18,7 @@
 
 - fields = fields.except(*local_assigns[:skip_fields]) if !local_assigns[:skip_fields].nil?
 
-%div.table-wrapper.overflow-x-scroll{data: {controller: "batch-actions"}}
+%div.table-wrapper{data: {controller: "batch-actions"}}
 
   - if local_assigns[:batch_actions]
     = self.send(local_assigns[:batch_actions])
