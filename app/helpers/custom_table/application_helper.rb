@@ -108,7 +108,7 @@ module CustomTable
           if !defs.nil? && !defs[:type].nil?
             return date_value(v) if [:date, :datetime].include?(defs[:type])
           end
-          return v.to_s
+          return v.to_s.presence || not_set
         end
       end
       
