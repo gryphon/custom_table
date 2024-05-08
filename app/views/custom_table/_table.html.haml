@@ -143,9 +143,12 @@
                   %th.text-end
                     - if !local_assigns[:group_actions].nil?
                       = self.send(local_assigns[:group_actions], group)
+
             - items.each do |item|
               - position+=1
-              = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals, grouped_by_id: group_id})
+              - la = local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals, grouped_by_id: group_id})
+              - la[:expanded] = true if group.nil? # Items without group will be shown anyway
+              = render "custom_table/table_row", la
 
       - else
 
