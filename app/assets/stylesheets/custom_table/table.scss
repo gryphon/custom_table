@@ -91,11 +91,11 @@ table.custom-table {
 
 @include media-breakpoint-down(md) {
   .custom-table-filter {
-    > :not(.has-value, .btn-group) {
+    > :not(.has-value, .btn-group, .sm-visible) {
       display: none;
     }
     &.show-all {
-      > :not(.has-value, .btn-group) {
+      > :not(.has-value, .btn-group, .sm-visible) {
         display: block;
       }
     }

@@ -34,7 +34,7 @@
           - label = field[:label] || defs[:label]
 
           - has_value = params[:q] && field[:q] && params[:q][field[:q].to_s].present?
-          - hvh = {wrapper_html: {class: (has_value ? "has-value" : "")}}
+          - hvh = {wrapper_html: {class: (has_value ? "has-value" : (field[:sm_visible]==true ? "sm-visible" : ""))}}
           - has_unset_fields = true if !has_value
 
           - if field[:type] == :text

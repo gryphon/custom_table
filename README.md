@@ -42,6 +42,7 @@ Use attribute name as key if possbile. Table will try to get most of options aut
 * ```search``` contains search parameters. Skip this if search is not available for this fields
 * * ```q``` ransack's "q" search marcher which is used to search by the field. For range use array of two elements, e.g. ```[:created_at_gteq, :created_at_lteq]```
 * * ```type``` type of search element to draw
+* * ```sm_visible``` set to true to make this field search always be visible in small screens (by default all fields collapsed)
 * ```appear``` controls visibility of the field. Default value is hidden if not specially selected
 * * ```default``` will appear by default
 * * ```always``` will always appear
