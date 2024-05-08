@@ -18,13 +18,13 @@
 
 - fields = fields.except(*local_assigns[:skip_fields]) if !local_assigns[:skip_fields].nil?
 
-%div.table-wrapper{data: {controller: "batch-actions"}}
+%div.table-wrapper.overflow-x-lg-scroll{data: {controller: "batch-actions"}}
 
   - if local_assigns[:batch_actions]
     = self.send(local_assigns[:batch_actions])
 
   %table{class: ["search-fields", "custom-table", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table toggle"}}
-    %thead.sticky
+    %thead.sticky-lg-top
       - if local_assigns[:quick_filter]
         %tr
           %td{colspan: "100%"}

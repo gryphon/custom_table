@@ -101,3 +101,10 @@ table.custom-table {
     }
   }
 }
+
+
+@include media-breakpoint-down(lg) {
+  .overflow-x-lg-scroll {
+    overflow-x: scroll;
+  }
+}
