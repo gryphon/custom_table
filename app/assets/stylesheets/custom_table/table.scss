@@ -88,7 +88,6 @@ table.custom-table {
   overflow: hidden;
 }
 
-
 @include media-breakpoint-down(md) {
   .custom-table-filter {
     > :not(.has-value, .btn-group, .sm-visible) {
@@ -100,6 +99,7 @@ table.custom-table {
       }
     }
   }
+
 }
 
 
@@ -107,4 +107,20 @@ table.custom-table {
   .overflow-x-lg-scroll {
     overflow-x: scroll;
   }
+
 }
+
+@include media-breakpoint-up(sm) {
+  .custom-table-settings {
+    columns: 2
+  }
+}
+
+
+@include media-breakpoint-up(lg) {
+  .custom-table-settings {
+    columns: 3
+  }
+}
+
+

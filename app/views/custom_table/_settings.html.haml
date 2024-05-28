@@ -32,11 +32,11 @@
             = f.hidden_field "variant", value: variant
 
             = f.simple_fields_for :fields do |sfi|
-              %div{data: {controller: "sortable", "data-sortable-handle-value": ".handle"}, style: "columns: #{columns}"}
+              %div.custom-table-settings{data: {controller: "sortable", "sortable-handle-value": ".handle"}}
 
                 - items.each do |field, item|
                   -# = abort item.inspect
-                  %div
+                  %div.text-nowrap.overflow-x-hidden
                     %i.handle{style: "cursor: move", class: custom_table_move_icon_class}
                     .form-check.form-switch.d-inline-block
                       -# - if item[:appear] == :always
