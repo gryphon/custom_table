@@ -161,8 +161,20 @@ Then just pass variant to filter and data helpers.
 
 ## Table Stimulus helper
 
+## Batch Actions
 
+You can set ```batch``` option to field definition to enable batch editing
 
+You need to set following options to ```custom_table_data```:
+
+* ```batch_actions``` - shows batch actions. Set to helper name for custom actions
+* ```batch_activator``` - shows more compact batch selecting view. Enabled by default
+
+You have to declare the following routes for the resource:
+
+* ```batch_edit``` - POST with ```plural model name``` array will be requested to show form for mass editing
+* ```batch_update``` - POST with ```plural model name``` array will be requested to update records with params
+* ```batch_destroy``` - DELETE with ```plural model name``` array will be requested to delete records
 
 ## Downloading data as XLSX table
 

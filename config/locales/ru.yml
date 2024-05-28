@@ -17,3 +17,11 @@ ru:
     quick_search: Быстрый поиск
     download_only_selected_fields: Скачать только выбранные колонки
     show_all_filters: Показать все фильтры
+    batch_update: Изменить выбранные
+    batch_destroy: Удалить выбранные
+    batch_action_description: Укажите галочками поля, которые вы хотите изменить
+    batch_selected_items_count: 
+      one: "Одна запись выбрана для изменения"
+      few: "%{count} записи выбрано для изменения"
+      many: "%{count} записей выбрано для изменения"
+

@@ -96,8 +96,10 @@ module CustomTable
           return boolean_icon(item.send(field)) rescue ""
         elsif item.class.defined_enums.has_key?(field.to_s)
           return (item.send("human_#{field}") rescue (item.send(field).presence || not_set)).to_s rescue ""
-        elsif item.class.columns_hash[field.to_s] && [:date, :datetime].include?(item.class.columns_hash[field.to_s].type)
+        elsif item.class.columns_hash[field.to_s] && [:date].include?(item.class.columns_hash[field.to_s].type)
           return (item.send(field).blank? ? not_set : l(item.send(field), format: :short)) rescue ""
+        elsif item.class.columns_hash[field.to_s] && [:datetime].include?(item.class.columns_hash[field.to_s].type)
+          return (item.send(field).blank? ? not_set : l(item.send(field), format: :default)) rescue ""
         elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)
           return not_set if (item.send(field) rescue nil).nil?
           return item.send(field) if !defs.nil? && defs[:amount] === false # Showing simple output if amount is false
@@ -291,7 +293,6 @@ module CustomTable
         return model_fields.each{|k,f| f[:selected] = [:always, :default].include?(f[:appear])}
       end
   
-    
     end
   
     # Prepares object of user fields customization
@@ -323,9 +324,15 @@ module CustomTable
   
     # Base definition for model
     def custom_table_fields_definition_for(model, variant = nil)
+
       helper_name = "#{model.model_name.singular}_custom_table_fields"
       if (! self.class.method_defined?(helper_name))
-        raise "#{helper_name} helper is not defined so we do not know how to render custom_table for #{model}"
+        helper_name = "#{model.model_name.element}_custom_table_fields"
+
+        # Removing namespace from model
+        if (! self.class.method_defined?(helper_name))
+          raise "#{helper_name} helper is not defined so we do not know how to render custom_table for #{model}"
+        end
       end
 
       if variant.nil? || method(helper_name).parameters.empty?
@@ -371,7 +378,9 @@ module CustomTable
       params[:last_page] = true if params[:last_page]!=false
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
       params[:modal_edit] = true if params[:modal_edit].nil?
-      
+      params[:with_select] = true if params[:with_select].nil? && params[:batch_actions]
+      params[:batch_activator] = true if params[:batch_activator].nil? && params[:batch_actions] === true
+
       render "custom_table/table", params do
         yield
       end
@@ -487,6 +496,37 @@ module CustomTable
         out[f] = found[1] if !found.nil?
       end
       return out
+    end
+
+    def custom_table_batch_ids items
+      return if items.nil? || items.length == 0
+      capture do
+        items.each do |item|
+          concat hidden_field_tag("#{item.model_name.plural}[]", item.id)
+        end
+        concat content_tag(:p, t("custom_table.batch_selected_items_count", count: items.length))
+        concat content_tag(:p, t("custom_table.batch_action_description"))
+      end
+    end
+
+    def custom_table_batch_fields model
+      custom_table_fields_definition_for(model).select{|f, d| d[:batch] == true}.keys
+    end
+
+    def custom_table_batch_actions model
+
+      item = model.new
+      forms = []
+      forms.push (form_for(item, url: [:batch_edit, item.model_name.plural.to_sym], params: "ids[]", html: {class: "d-inline me-1"}, method: :post, "target": "remote-modal", data: {"turbo-frame": "remote-modal", "batch-actions-target": "form", "action": "batch-actions#submit"}) do |f|
+        concat(f.submit t("custom_table.batch_update"), class: "btn btn-success btn-sm my-1")
+      end)
+  
+      forms.push (form_for(item, url: [:batch_destroy, item.model_name.plural.to_sym], params: "ids[]", html: {class: "d-inline"}, method: :delete, data: {"turbo-confirm": t("are_you_sure"), "batch-actions-target": "form", "action": "batch-actions#submit"}) do |f|
+        concat(f.submit t("custom_table.batch_destroy"), class: "btn btn-danger btn-sm my-1")
+      end)
+  
+      forms.join("").html_safe
+  
     end
 
   end

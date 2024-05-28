@@ -17,3 +17,10 @@ en:
     quick_search: Quick Search
     download_only_selected_fields: Download selected columns only
     show_all_filters: Show all filters
+    batch_update: Change selected
+    batch_destroy: Delete selected
+    batch_action_description: Mark fields for changing with check boxes
+    batch_selected_items_count: 
+      one: "One item selected for batch update"
+      few: "%{count} items selected for batch update"
+      many: "%{count} items selected for batch update"
