@@ -69,7 +69,7 @@
 
             - collection = collection.accessible_by(current_ability) if collection.class.to_s =~ /ActiveRecord_Relation/i
 
-            = f.input field[:q], :as => :grouped_select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, group_method: field[:group_method], :collection => collection, include_blank: label, **hvh
+            = f.input field[:q], :as => :grouped_select, :input_html => {:class => "form-select form-select-sm"}, :required => false, :label => false, group_method: field[:group_method], value_method: field[:value_method], :collection => collection, include_blank: label, **hvh
 
           - if field[:type] == :autocomplete
 
@@ -77,7 +77,7 @@
 
             - collection = collection.accessible_by(current_ability) if collection.class.to_s =~ /ActiveRecord_Relation/i
 
-            = f.input field[:q], :as => :autocomplete, :input_html => {:class => "input-sm"}, :required => false, :label => false, :collection => collection, prompt: label, **hvh
+            = f.input field[:q], :as => :autocomplete, :input_html => {:class => "input-sm"}, :required => false, :label => false, :collection => collection, url: field[:url], prompt: label, **hvh
 
           - if field[:type] == :enum
 
@@ -93,7 +93,7 @@
                 = f.input_field field[:q][0], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateFrom"}, :placeholder => label+" ("+t("custom_table.date_from")+")"
                 = f.input_field field[:q][1], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateTo"}, :placeholder => label+" ("+t("custom_table.date_to")+")"
                 %button.btn.btn-outline-secondary.dropdown-toggle(type="button" data-bs-toggle="dropdown" aria-expanded="false")
-                %ul.dropdown-menu.dropdown-menu-end
+                %ul.dropdown-menu.dropdown-menu-end{style: "z-index: 1080"}
                   %button.dropdown-item{type: "button", "data-action": "dates#prevWeek"}= t("analytics.previos_week")
                   %button.dropdown-item{type: "button", "data-action": "dates#prevMonth"}= t("analytics.previos_month")
                   %button.dropdown-item{type: "button", "data-action": "dates#prevYear"}= t("analytics.previos_year")

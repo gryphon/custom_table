@@ -130,8 +130,10 @@ table.custom-table {
 
 
 @include media-breakpoint-up(lg) {
-  .custom-table-settings {
-    columns: 3
+  .modal-lg, .modal-xl {
+    .custom-table-settings {
+      columns: 3
+    }
   }
 }
 

@@ -99,7 +99,7 @@ module CustomTable
         elsif item.class.columns_hash[field.to_s] && [:date].include?(item.class.columns_hash[field.to_s].type)
           return (item.send(field).blank? ? not_set : l(item.send(field), format: :short)) rescue ""
         elsif item.class.columns_hash[field.to_s] && [:datetime].include?(item.class.columns_hash[field.to_s].type)
-          return (item.send(field).blank? ? not_set : l(item.send(field), format: :default)) rescue ""
+          return (item.send(field).blank? ? not_set : l(item.send(field), format: CustomTable.configuration.date_format)) rescue ""
         elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)
           return not_set if (item.send(field) rescue nil).nil?
           return item.send(field) if !defs.nil? && defs[:amount] === false # Showing simple output if amount is false
@@ -265,7 +265,7 @@ module CustomTable
   
     # Returns list of fields for customization form
     def custom_table_fields_settings_for(model, variant: nil)
-  
+ 
       model_fields = custom_table_fields_definition_for(model, variant)
       model_fields = model_fields.reject {|k,v| [:export, :never].include?(v[:appear]) }
 

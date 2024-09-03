@@ -276,7 +276,7 @@
 
     - begin
       - if collection.total_count > 25
-        %nav.float-end.ms-2
+        %nav.float-end.ms-2.d-none.d-sm-block
           %ul.pagination
             - [25, 50, 100].each do |p|
               %li.page-item{class: (collection.limit_value.to_i == p) ? "active" : ""}
