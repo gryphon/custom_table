@@ -3,7 +3,7 @@ module CustomTableSettings
   extend ActiveSupport::Concern
 
   included do
-    serialize :custom_table
+    serialize :custom_table, coder: YAML
   end
 
   def save_custom_table_settings model_class, variant = nil, fields: nil, sorts: nil, per_page: nil

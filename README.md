@@ -6,6 +6,8 @@ Provides powerful set of functionality for showing tables of data:
 * Customize visible fields for each user
 * Exporting table to XLSX
 
+Requires and works only with Ransack, Kaminari, Bootstrap CSS, Rails, simple_form and Turbo gems.
+
 ## Setup
 
 * Run ```rails generate custom_table install``` to create User migration and Initializer
@@ -63,7 +65,7 @@ This gem provides custom_table method for your controller which does Ransack sea
       @q = @vegetables.ransack(params[:q])
       @q.sorts = 'created_at desc' if @q.sorts.empty? # Sets default sorting for ransack
 
-      @vegetables = @q.result(distinct: true)
+      @vegetables = @q.result(distict: true)
       @vegetables = @vegetables.page(params[:page]).per(params[:per] || 25)
     end
 
@@ -214,11 +216,16 @@ You can declare how each field is displayed. Just add it as block within field:
       = fs.field :name do
         = @instance.name.upcase
 
-## Testing
+## Testing hints for your app
 
 Use ```custom_table_use_all_fields``` GET param with any value to show all available fields in your feature tests
 
 ## Development
 
-Running tests: rspec
+Running tests: 
+
+* `bundle install`
+* `bundle exec rails db:migrate`
+* `RAILS_ENV=test bundle exec rspec`
+
 

@@ -5,6 +5,7 @@ module CustomTable
     attr_accessor :show_search_icon
     attr_accessor :move_totals_top
     attr_accessor :date_format
+    attr_accessor :datetime_format
 
     def initialize
       @icons_framework = :bi
@@ -13,6 +14,8 @@ module CustomTable
       @show_search_icon = false
       @move_totals_top = false
       @date_format = :default
+      @datetime_format = :short
+
     end
 
   end
