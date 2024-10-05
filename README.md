@@ -63,7 +63,7 @@ This gem provides custom_table method for your controller which does Ransack sea
       @q = @vegetables.ransack(params[:q])
       @q.sorts = 'created_at desc' if @q.sorts.empty? # Sets default sorting for ransack
 
-      @vegetables = @q.result(distict: true)
+      @vegetables = @q.result(distinct: true)
       @vegetables = @vegetables.page(params[:page]).per(params[:per] || 25)
     end
 
