@@ -3,10 +3,11 @@ name: Release
 # push: This runs every time a new commit is pushed to GitHub.
 # pull_request: This runs every time a new pull request is made, which allows forks to trigger CI
 on:
-  push:
-    # Pattern matched against refs/tags
-    tags:        
-      - '*'           # Push events to every tag not containing /
+  # push:
+  #   # Pattern matched against refs/tags
+  #   tags:        
+  #     - '*'           # Push events to every tag not containing /
+  workflow_dispatch:
 
 jobs:
   rspec:
