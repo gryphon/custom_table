@@ -2,7 +2,7 @@ name: CI
 
 # push: This runs every time a new commit is pushed to GitHub.
 # pull_request: This runs every time a new pull request is made, which allows forks to trigger CI
-on: [push, pull_request]
+on: [push, pull_request, workflow_call]
 
 jobs:
   rspec:
