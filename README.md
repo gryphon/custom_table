@@ -4,7 +4,7 @@ Provides powerful set of functionality for showing tables of data:
 * Generated table and filter panel for any model
 * Declare fields that should be displayed, filtered or sorted
 * Customize visible fields for each user
-* Exporting table to XLSX
+* Exporting table to XLSX (helpers for CAXLSX, fast_excel and CSV)
 
 Requires and works only with Ransack, Kaminari, Bootstrap CSS, Rails, simple_form and Turbo gems.
 
