@@ -24,11 +24,10 @@ jobs:
       # Set up
       - uses: actions/checkout@v4
       - name: Set up Ruby
-        uses: ruby/setup-ruby@f6e05710eced3c9c28e489afdc6fd8a3bc685325
+        uses: ruby/setup-ruby@1
         with:
           bundler-cache: true
           ruby-version: ruby
-      # - name: Bundle
-      #   run: bundle install
+
       # Release
       - uses: rubygems/release-gem@v1

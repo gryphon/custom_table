@@ -25,7 +25,7 @@ jobs:
       # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-versioned-actions
       - uses: actions/checkout@v4
       - name: Set up Ruby ${{ matrix.ruby }}
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@1
         with:
           # This caches the gems that bundle installs so subsequent runs can be faster.
           # It is what allows us to not run `gem install bundler` and `bundle install` in subsequent steps.
