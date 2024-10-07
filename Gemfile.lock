@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    custom_table (1.0.3)
+    custom_table (1.0.7)
       cancancan
       caxlsx_rails (~> 0.6)
       devise (~> 4.9)
