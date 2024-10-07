@@ -6,8 +6,16 @@ Gem::Specification.new do |spec|
   spec.authors     = ["Grigory"]
   spec.email       = ["mail@grigor.io"]
   spec.homepage    = "http://github.com/gryphon/custom_table"
-  spec.summary     = %q{Easy tables with filters}
-  spec.description = %q{Easy tables with filters}
+  spec.summary     = %q{Powerful user-customizable data tables with filters, sorting, grouping, totals and export}
+  spec.description = <<-EOF
+    Gem provides powerful set of functionality for showing tables of data:
+    * Generated table and filter panel for any model
+    * Declare fields that should be displayed, filtered or sorted
+    * Customize visible fields for each user
+    * Exporting table to XLSX (helpers for CAXLSX, fast_excel and CSV)
+
+    Requires and works only with Ransack, Kaminari, Bootstrap CSS, Rails, simple_form and Turbo gems.
+  EOF
   
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
   # to allow pushing to a single host or delete this section to allow pushing to any host.

@@ -1,6 +1,6 @@
 # Custom Table
 
-Provides powerful set of functionality for showing tables of data:
+Gem provides powerful set of functionality for showing tables of data:
 * Generated table and filter panel for any model
 * Declare fields that should be displayed, filtered or sorted
 * Customize visible fields for each user
