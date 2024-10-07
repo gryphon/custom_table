@@ -2,16 +2,14 @@ name: Release
 
 # push: This runs every time a new commit is pushed to GitHub.
 # pull_request: This runs every time a new pull request is made, which allows forks to trigger CI
-on: 
-  create:
-  # push:
-  #   # Pattern matched against refs/tags
-  #   tags:        
-  #     - '*'           # Push events to every tag not containing /
+on:
+  push:
+    # Pattern matched against refs/tags
+    tags:        
+      - '*'           # Push events to every tag not containing /
 
 jobs:
   push:
-    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     name: Push gem to RubyGems.org
     runs-on: ubuntu-latest
     needs: rspec
