@@ -31,6 +31,8 @@ jobs:
           # It is what allows us to not run `gem install bundler` and `bundle install` in subsequent steps.
           # bundler-cache: true
           ruby-version: ${{ matrix.ruby }}
+      - name: Bundle
+        run: bundle install
       - name: Run tests
         run: bundle exec rspec
   # rubocop:
