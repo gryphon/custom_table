@@ -57,9 +57,13 @@ Use attribute name as key if possbile. Table will try to get most of options aut
 
 ## Controller setup
 
-Add ```CustomTableConcern``` to your controller to get easy index page solution.
-
 This gem provides custom_table method for your controller which does Ransack search and Kaminari pagination for you:
+
+    def index
+      @vegetables = custom_table(@vegetables)
+    end
+
+Is equivalent to:
 
     def index
       @q = @vegetables.ransack(params[:q])
@@ -67,12 +71,6 @@ This gem provides custom_table method for your controller which does Ransack sea
 
       @vegetables = @q.result(distict: true)
       @vegetables = @vegetables.page(params[:page]).per(params[:per] || 25)
-    end
-
-Is equivalent to:
-
-    def index
-      @vegetables = custom_table(@vegetables)
     end
 
 Optional parameters are:

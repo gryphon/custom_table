@@ -7,7 +7,7 @@ module CustomTable
     layout false
 
     def edit
-      @search_model = params[:id].constantize
+      @search_model = get_model(params[:id])
       @variant = params[:variant].presence
       if !@variant.nil? && !helpers.custom_table_variants_for(@search_model).include?(@variant)
         render status: 404, html: "No such variant: #{@variant}"
@@ -20,7 +20,7 @@ module CustomTable
 
       p = settings_params.to_h
 
-      model = p[:model].constantize
+      model = get_model(p[:model])
       variant = p[:variant].presence
 
       defs = helpers.custom_table_fields_definition_for(model, variant)
@@ -53,7 +53,7 @@ module CustomTable
     # PATCH/PUT settings
     def destroy
 
-      model = params[:id].constantize
+      model = get_model(params[:id])
       variant = params[:variant].presence
 
       defs = helpers.custom_table_fields_definition_for(model)
@@ -78,6 +78,15 @@ module CustomTable
 
 
     private
+
+      def get_model model
+        helper_name = "#{model.underscore}_custom_table_fields"
+        if (! helpers.respond_to?(helper_name))
+          return nil
+        else
+          return model.constantize
+        end
+      end
 
       # Only allow a list of trusted parameters through.
       def settings_params

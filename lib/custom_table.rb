@@ -10,5 +10,5 @@ module CustomTable
   def self.configure(&block)
     yield(configuration)
   end
-
+  
 end
