@@ -101,10 +101,10 @@
                   %button.dropdown-item{type: "button", "data-action": "dates#clear"}= t("clear")
 
       .btn-group
-        = f.button :submit, t("search"), name: "", :class => "btn-sm btn-primary"
+        = f.button :submit, t("custom_table.search"), name: "", :class => "btn-sm btn-primary"
         - if has_unset_fields
           %button.d-md-none.btn.btn-sm.btn-outline-primary{onclick: "closest('form').classList.add('show-all'); return false"}= t("custom_table.show_all_filters")
-        - if user_signed_in? && current_user_has_customizable_fields_for?(search_model, variant) && !local_assigns[:hide_customization] && !local_assigns[:fields]# && !(profile_path rescue nil).nil?
+        - if self.respond_to?(:user_signed_in?) && user_signed_in? && current_user_has_customizable_fields_for?(search_model, variant) && !local_assigns[:hide_customization] && !local_assigns[:fields]# && !(profile_path rescue nil).nil?
           = custom_table_settings_button search_model, variant
         - if params[:q].present? && !params[:q].except(:s).empty?
           = link_to url_for(params.permit!.except(:q)), class: "btn btn-sm btn-outline-danger", title: t("custom_table.clear_search") do

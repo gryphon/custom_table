@@ -6,7 +6,7 @@ Gem provides powerful set of functionality for showing tables of data:
 * Customize visible fields for each user
 * Exporting table to XLSX (helpers for CAXLSX, fast_excel and CSV)
 
-Requires and works only with Ransack, Kaminari, Bootstrap CSS, Rails, simple_form and Turbo gems.
+Requires and works only with Ransack, Kaminari, Bootstrap, simple_form and Turbo.
 
 ## Setup
 
@@ -136,16 +136,27 @@ If you use variant, following helper will have the priority over all options:
 ## Displaying custom actions
 
 
-
 ## Customizing user columns
+
+Enable Rails Turbo, Bootstrap, Stimulus in your application.js:
+
+```
+  import "@hotwired/turbo-rails"
+  import "@hotwired/stimulus"
+  import "bootstrap"
+```
+
+Add turbo-remote-modal Gem: https://github.com/gryphon/turbo_remote_modal
 
 Add CustomTable as engine to your routes:
 
-And ```custom_table``` attribute as text to your model
+`mount CustomTable::Engine, at: "/custom_table"`
 
-Search Settings button will show up automatically if you have at least one customizable field.
+And ```custom_table``` attribute as text to your model to store search configuration
 
-You can also use settings button separatelly. It uses Rails turbo and you need to declare ```turbo-modal``` Turbo Tag within your HTML body.
+Search Settings button will show up automatically if you have at least one customizable field and your app has users support via `current_user` and `user_signed_in?` view helpers (Devise-compartible).
+
+You can also show settings button separatelly. It uses Rails Turbo and you need to declare ```remote-modal``` Turbo Tag within your HTML body.
 
 ## Variants
 
@@ -160,6 +171,10 @@ Which returns the array of available variant.
 Then just pass variant to filter and data helpers.
 
 ## Table Stimulus helper
+
+## Authorization support (Cancancan compartible)
+
+If your app provides `can?` view helper custom_table will check if user can update or destroy record while showing table row buttons.
 
 ## Batch Actions
 

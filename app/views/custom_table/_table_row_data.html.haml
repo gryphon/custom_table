@@ -13,14 +13,3 @@
       = link_to v, [namespace, item]
     - else
       = v
-
-  -# %td.text-end.actions
-  -#   - if !local_assigns[:actions].nil?
-  -#     = self.send(local_assigns[:actions], item)
-  -#   - elsif self.class.method_defined?("#{model_name}_custom_table_actions")
-  -#     = self.send("#{model_name}_custom_table_actions", item)
-  -#   - if local_assigns[:skip_default_actions].nil?
-  -#     - if (!has_show_route?(item) || local_assigns[:force_edit_button]) && can?(:update, item)
-  -#       = edit_button [:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}"
-  -#     - if can? :destroy, item
-  -#       = delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}", data: turbo_frame_request? ? {} : {}

@@ -299,7 +299,7 @@ module CustomTable
     def custom_table_user_customized_fields_for(model, variant = nil)
       fields_key = custom_table_fields_key(model, variant)
       defs = custom_table_fields_definition_for(model, variant)
-      return nil if current_user.nil? || current_user.custom_table.nil? || current_user.custom_table.dig(fields_key, :fields).nil?
+      return nil if !self.respond_to?(:current_user) || current_user.nil? || current_user.custom_table.nil? || current_user.custom_table.dig(fields_key, :fields).nil?
       return current_user.custom_table.dig(fields_key, :fields).symbolize_keys.reject{|k,v| defs[k.to_sym].nil?}
   
     end
@@ -307,7 +307,7 @@ module CustomTable
     # Prepares object of user search customization
     def custom_table_user_customization_for(model, variant = nil)
       fields_key = custom_table_fields_key(model, variant)
-      return nil if current_user.nil? || current_user.custom_table.nil?
+      return nil if !self.respond_to?(:current_user) || current_user.nil? || current_user.custom_table.nil?
       return current_user.custom_table[fields_key]&.symbolize_keys
     end
   
@@ -528,6 +528,23 @@ module CustomTable
       forms.join("").html_safe
   
     end
+
+    # Override for custom logic (namespaces, inheritance, etc)
+    def custom_table_has_show_route?(item)
+      return (!url_for(controller: item.model_name.plural, action: "show", id: 1).nil?) rescue return false
+    end  
+
+    # Override for custom Delete button
+    def custom_table_delete_button(path, options = {})
+      options[:method] = "delete"
+      options[:class] = "btn btn-outline-danger btn-sm" if options[:class].nil?
+      button_to "Destroy", path, options
+    end
+  
+    # Override for custom Edit button
+    def custom_table_edit_button(path, options = {})
+      link_to "Edit", path, options
+    end  
 
   end
   

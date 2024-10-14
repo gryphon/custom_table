@@ -1,5 +1,6 @@
 ru:
   custom_table:
+    search: Искать
     customize_table: Настроить колонки
     customize_table_description: Выберите колонки, которые вы хотите видеть в таблице, и отсортируйте порядок их показа
     customization_not_allowed: Настройка таблицы %{model} не предусмотрена

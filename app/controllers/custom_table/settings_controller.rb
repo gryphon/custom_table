@@ -2,7 +2,10 @@ module CustomTable
   class SettingsController < ::ApplicationController
 
     before_action :authenticate_user!
-    skip_authorization_check # Because we do it manually
+
+    if defined?(Ability)
+      skip_authorization_check # Because we do it manually
+    end
 
     layout false
 

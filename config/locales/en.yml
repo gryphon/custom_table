@@ -1,5 +1,6 @@
 en:
   custom_table:
+    search: Search
     customize_table: Choose columns
     customize_table_description: Choose columns you want to see in the table and sort them
     customization_not_allowed: Customization of %{model} table is not allowed
