@@ -40,10 +40,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails", "~> 7.0"
   spec.add_dependency "ransack", '~> 4.0'
   spec.add_dependency "kaminari", '~> 1.2'
-  spec.add_dependency "devise", '~> 4.9'
-  spec.add_dependency "cancancan"
+  # spec.add_dependency "devise", '~> 4.9' # Now optional
+  # spec.add_dependency "cancancan" # Now optional
   spec.add_dependency "turbo-rails"
   spec.add_dependency "haml-rails"
   spec.add_dependency "simple_form"
-  spec.add_dependency "caxlsx_rails", '~> 0.6'
+  # spec.add_dependency "caxlsx_rails", '~> 0.6' # Optional
+  # spec.add_dependency "fast_excel" # Optional
 end

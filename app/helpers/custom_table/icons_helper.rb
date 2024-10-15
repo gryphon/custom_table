@@ -42,6 +42,17 @@ module CustomTable
       return content_tag(:i, "", class: c)
     end
 
+    # Can be overriden
+    def boolean_icon c
+      if c
+        return custom_table_icon("fa fa-check") if CustomTable.configuration.icons_framework == :fa
+        return custom_table_icon("bi bi-check") if CustomTable.configuration.icons_framework == :bi
+      else
+        return custom_table_icon("fa fa-times") if CustomTable.configuration.icons_framework == :fa
+        return custom_table_icon("bi bi-x") if CustomTable.configuration.icons_framework == :bi
+      end
+    end
+
   end
 
 end

@@ -12,9 +12,22 @@ Requires and works only with Ransack, Kaminari, Bootstrap, simple_form and Turbo
 
 * Run ```rails generate custom_table install``` to create User migration and Initializer
 * Generate base helpers
-* Add CustomTable engine routes
-* Add concern to controllers
-* Add CSS import to your application.css: ```@import 'custom_table/table.css';```
+* Add CustomTable engine routes (for table columns customization feature)
+`mount CustomTable::Engine, at: "/custom_table"`
+* Add CSS import to your application.css: 
+```@import 'custom_table/table.css';```
+* Add Stimulus controllers to your JS:
+```
+import TableController from "custom_table/app/javascript/controllers/table_controller.js"
+application.register("table", TableController)
+
+import BatchActionsController from "custom_table/app/javascript/controllers/batch_actions_controller.js"
+application.register("batch-actions", BatchActionsController)
+
+import FlatpickrController from "custom_table/app/javascript/controllers/flatpickr_controller.js"
+application.register("flatpickr", FlatpickrController)
+
+```
 * Add concern to User model
 * Declare your first model
 
@@ -69,7 +82,7 @@ Is equivalent to:
       @q = @vegetables.ransack(params[:q])
       @q.sorts = 'created_at desc' if @q.sorts.empty? # Sets default sorting for ransack
 
-      @vegetables = @q.result(distict: true)
+      @vegetables = @q.result(distinct: true)
       @vegetables = @vegetables.page(params[:page]).per(params[:per] || 25)
     end
 
@@ -100,7 +113,7 @@ Options available are:
 * ```tree``` set to true if you have parent-child relation and you want to show records grouped by parent. Be sure to disable pagination as it will only group current page records 
 * ```group_by``` set to helper name to group records by result of it. Be sure to disable pagination as it will only group current page records 
 * ```expanded``` expand grouped or trees by default
-* ```sortable``` set to true to allow to sort models. Model needs to have ```position``` attribute and use ```acts_as_list``` gem to be sorted. Gem uses ```stimulus-sortable``` JS package for sorting
+* ```sortable``` set to true to allow to sort models. Model needs to have ```position``` attribute and use ```acts_as_list``` gem to be sorted. Gem uses ```SortableController``` JS component based on top of SortableJS for sorting. Add `order(:position)` after `custom_table` call in controller to order items correctly.
 
 ## Rendering search panel
 

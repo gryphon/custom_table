@@ -90,8 +90,8 @@
           - if field[:type] == :dates
             .col-6{class: (has_value ? "has-value" : "")}
               .input-group.input-group-sm{"data-controller": "dates"}
-                = f.input_field field[:q][0], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateFrom"}, :placeholder => label+" ("+t("custom_table.date_from")+")"
-                = f.input_field field[:q][1], :as => :date_picker, :label => false, :class => "form-control", data: {"dates-target": "dateTo"}, :placeholder => label+" ("+t("custom_table.date_to")+")"
+                = f.input_field field[:q][0], :as => :date_picker, required: false, :label => false, :class => "form-control", data: {"dates-target": "dateFrom"}, :placeholder => label+" ("+t("custom_table.date_from")+")"
+                = f.input_field field[:q][1], :as => :date_picker, required: false, :label => false, :class => "form-control", data: {"dates-target": "dateTo"}, :placeholder => label+" ("+t("custom_table.date_to")+")"
                 %button.btn.btn-outline-secondary.dropdown-toggle(type="button" data-bs-toggle="dropdown" aria-expanded="false")
                 %ul.dropdown-menu.dropdown-menu-end{style: "z-index: 1080"}
                   %button.dropdown-item{type: "button", "data-action": "dates#prevWeek"}= t("analytics.previos_week")
@@ -100,15 +100,16 @@
                   %hr.dropdown-divider
                   %button.dropdown-item{type: "button", "data-action": "dates#clear"}= t("clear")
 
-      .btn-group
-        = f.button :submit, t("custom_table.search"), name: "", :class => "btn-sm btn-primary"
+      .d-inline.text-nowrap
         - if has_unset_fields
-          %button.d-md-none.btn.btn-sm.btn-outline-primary{onclick: "closest('form').classList.add('show-all'); return false"}= t("custom_table.show_all_filters")
-        - if self.respond_to?(:user_signed_in?) && user_signed_in? && current_user_has_customizable_fields_for?(search_model, variant) && !local_assigns[:hide_customization] && !local_assigns[:fields]# && !(profile_path rescue nil).nil?
-          = custom_table_settings_button search_model, variant
-        - if params[:q].present? && !params[:q].except(:s).empty?
-          = link_to url_for(params.permit!.except(:q)), class: "btn btn-sm btn-outline-danger", title: t("custom_table.clear_search") do
-            = custom_table_cancel_icon
+          %button.d-md-none.btn.btn-sm.btn-outline-primary{type: "button", onclick: "closest('form').classList.add('show-all'); return false"}= t("custom_table.show_all_filters")
+        .btn-group
+          = f.button :submit, t("custom_table.search"), name: "", :class => "btn-sm btn-primary"
+          - if self.respond_to?(:user_signed_in?) && user_signed_in? && current_user_has_customizable_fields_for?(search_model, variant) && !local_assigns[:hide_customization] && !local_assigns[:fields]# && !(profile_path rescue nil).nil?
+            = custom_table_settings_button search_model, variant
+          - if params[:q].present? && !params[:q].except(:s).empty?
+            = link_to url_for(params.permit!.except(:q)), class: "btn btn-sm btn-outline-danger", title: t("custom_table.clear_search") do
+              = custom_table_cancel_icon
 
       = yield f
 
