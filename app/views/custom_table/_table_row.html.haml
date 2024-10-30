@@ -54,13 +54,13 @@
       - if editable_enabled
 
         = editable item, field do
-          - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && (!self.respond_to?(:can?) || can?(:show, item))
+          - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
             -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
             = link_to v, [namespace, item], data: {turbo: false}
           - else
             = v
       - else
-        - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && (!self.respond_to?(:can?) || can?(:show, item))
+        - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
           -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
           = link_to v, [namespace, item], data: {turbo: false}
         - else
@@ -77,8 +77,8 @@
         = self.send("#{model_name}_custom_table_actions", item)
       - if local_assigns[:skip_default_actions].nil?
         - local_assigns[:force_edit_button] = true if local_assigns[:force_edit_button].nil? && !custom_table_has_show_route?(item)
-        - if (local_assigns[:force_edit_button]) && (!self.respond_to?(:can?) || can?(:update, item))
+        - if (local_assigns[:force_edit_button]) && can?(:update, item)
           = custom_table_edit_button [:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}", modal: local_assigns[:modal_edit]
-        - if (!self.respond_to?(:can?) || can?(:destroy, item))
+        - if can? :destroy, item
           - if (Rails.application.routes.recognize_path(url_for([namespace, local_assigns[:parent], item]), :method => :delete) rescue false)
             = custom_table_delete_button [namespace, local_assigns[:parent], item], id: "destroy_#{item.model_name.singular}_#{item.id}"
