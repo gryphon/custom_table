@@ -400,6 +400,8 @@ module CustomTable
   
     def custom_table_filter search_model, variant=nil, **params, &block
 
+      return "NO @q (Ransack) object" if @q.nil?
+
       params[:search_model] = search_model
       params[:variant] = variant
       render "custom_table/filter", params do |f|
