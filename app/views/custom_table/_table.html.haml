@@ -15,6 +15,7 @@
 - local_assigns[:skip_actions] = true if local_assigns[:skip_actions].nil? && params[:skip_actions].to_s=="true"
 
 - fields = custom_table_fields_for(model_class, variant: variant, predefined_fields: local_assigns[:fields]) 
+- fields = fields.filter{|k, f| f[:if].nil? || f[:if] === true}
 
 - fields = fields.except(*local_assigns[:skip_fields]) if !local_assigns[:skip_fields].nil?
 

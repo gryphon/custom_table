@@ -54,6 +54,7 @@ Use attribute name as key if possbile. Table will try to get most of options aut
 ### Fields declaration options
 
 * ```label``` adds label to the field. Will try to find human attribute name by default
+* ```if``` set this boolean to false if you need to hide field. Default: shown
 * ```search``` contains search parameters. Skip this if search is not available for this fields
 * * ```q``` ransack's "q" search marcher which is used to search by the field. For range use array of two elements, e.g. ```[:created_at_gteq, :created_at_lteq]```
 * * ```type``` type of search element to draw

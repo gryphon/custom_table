@@ -3,6 +3,7 @@
 - field_key += "-#{variant}" if !variant.nil?
 - cls = local_assigns[:large].nil? ? "btn-sm" : ""
 - items = custom_table_fields_settings_for(search_model, variant: variant)
+- items = items.filter{|k, f| f[:if].nil? || f[:if] === true}
 
 - columns = 1; size = "modal-md"
 - (columns = 2; size = "modal-lg") if items.length > 10

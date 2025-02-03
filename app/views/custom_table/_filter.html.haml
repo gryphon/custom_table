@@ -13,6 +13,7 @@
         = f.input :s, as: :hidden, input_html: {value: params[:q].try(:[], :s)}
 
       - fields = custom_table_fields_for(search_model, variant: variant, current_search: params[:q], predefined_fields: local_assigns[:fields]) if local_assigns[:fields].nil? || local_assigns[:fields].kind_of?(Array)
+      - fields = fields.filter{|k, f| f[:if].nil? || f[:if] === true}
       - has_unset_fields = false
 
       - if CustomTable.configuration.show_search_icon

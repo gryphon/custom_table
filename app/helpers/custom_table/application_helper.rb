@@ -355,7 +355,7 @@ module CustomTable
 
       return defs.each{|x,y| y[:label] = model.human_attribute_name(x) if y[:label].nil? }
     end
-  
+
     # Base definition for model
     def custom_table_fields_definition_for_field(model, field, variant = nil)
 

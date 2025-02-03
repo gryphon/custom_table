@@ -18,6 +18,8 @@ module CustomTable
 
         defs = @template.custom_table_fields_definition_for_field(@object.class, column) rescue nil
 
+        return nil if !defs.nil? && defs[:if] === false
+
         params = {} if params.nil?
         params = params.deep_merge(@params)
         params[:editable] = true if params[:editable].nil?
@@ -30,7 +32,6 @@ module CustomTable
             params[:label] = @object.class.human_attribute_name(column) 
           end
         end
-
 
         params[:template] = "field" if params[:template].nil?
         params[:column] = column
