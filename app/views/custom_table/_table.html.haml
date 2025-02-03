@@ -184,6 +184,8 @@
 
         - found_totals = custom_table_totals(collection, fields, local_assigns[:totals], fields_totals)
 
+        -# = abort found_totals.inspect
+
         - if !found_totals.empty?
 
           %tr.totals{data: ((CustomTable.configuration.move_totals_top || local_assigns[:move_totals_top]) ? {"table-target": "move"} : {})}

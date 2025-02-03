@@ -36,11 +36,17 @@ module CustomTable
     # Helper {singular_model_name}_{field}_raw
     # Attribute of model
     def field_value_for item, field, definitions: nil, variant: nil
- 
+
       defs = definitions
 
       model_name = item.model_name.singular
       global_model_name = item.class.model_name.singular # non-model
+
+      if !defs.nil?
+        if self.class.method_defined?("#{model_name}_data_visible?") && !self.send("#{model_name}_data_visible?", item)
+          return "?" if !(defs[:visible_when_data_hidden] || defs[:link_to_show])
+        end
+      end
 
       helpers = []
       helpers += [defs[:helper]] if !defs.nil?
@@ -169,7 +175,13 @@ module CustomTable
 
       model_name = item.model_name.singular
       global_model_name = item.class.model_name.singular
-  
+
+      if !defs.nil?
+        if self.class.method_defined?("#{model_name}_data_visible?") && !self.send("#{model_name}_data_visible?", item)
+          return nil if !(defs[:visible_when_data_hidden] || defs[:link_to_show])
+        end
+      end
+
       helpers = []
 
       helpers += [
@@ -539,12 +551,13 @@ module CustomTable
     # Override for custom Delete button
     def custom_table_delete_button(path, options = {})
       options[:method] = "delete"
-      options[:class] = "btn btn-outline-danger btn-sm" if options[:class].nil?
+      options[:class] = "btn btn-outline-danger btn-sm action" if options[:class].nil?
       button_to "Destroy", path, options
     end
   
     # Override for custom Edit button
     def custom_table_edit_button(path, options = {})
+      options[:class] = "btn btn-outline-secondary btn-sm action" if options[:class].nil?
       link_to "Edit", path, options
     end  
 

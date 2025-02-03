@@ -87,7 +87,7 @@ collection.except(:limit, :offset).send(iterator) do |item|
   fields.each do |field, defs|
     next if defs[:table] == false
 
-    value = raw_field_value_for(item, field)
+    value = raw_field_value_for(item, field, definitions: defs, variant: local_assigns[:variant])
 
     if column_formats[field].nil?
 

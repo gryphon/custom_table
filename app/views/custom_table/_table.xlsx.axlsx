@@ -49,7 +49,7 @@ collection.except(:limit, :offset).find_each do |item|
   fields.each do |field, defs|
     next if defs[:table] == false
 
-    value = raw_field_value_for(item, field)
+    value = raw_field_value_for(item, field, definitions: defs, variant: local_assigns[:variant])
     val_def = nil
     val_style = aligned_style
 
