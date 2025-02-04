@@ -552,13 +552,13 @@ module CustomTable
     def custom_table_delete_button(path, options = {})
       options[:method] = "delete"
       options[:class] = "btn btn-outline-danger btn-sm action" if options[:class].nil?
-      button_to "Destroy", path, options
+      button_to t("destroy"), path, options
     end
   
     # Override for custom Edit button
     def custom_table_edit_button(path, options = {})
-      options[:class] = "btn btn-outline-secondary btn-sm action" if options[:class].nil?
-      link_to "Edit", path, options
+      options[:class] = "btn btn-outline-primary btn-sm action" if options[:class].nil?
+      link_to t("edit"), path, options
     end  
 
   end

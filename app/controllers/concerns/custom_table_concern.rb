@@ -36,7 +36,7 @@ module CustomTableConcern
     return collection
   end
 
-  def custom_table_export(format, collection, filename: nil)
+  def custom_table_export(format, collection, filename: nil, fields: nil, csv_separator: ",")
 
     filename ||= collection.model.model_name.plural
 
@@ -44,7 +44,7 @@ module CustomTableConcern
       # if collection.count > 1000
         # redirect_to params.permit!.merge({:format => :html}), alert: t("custom_table.huge_xlsx_alert", csv: helpers.link_to(t("custom_table.download_as_csv"), params.permit!.merge({:format => :csv})))
       # else
-        response.headers['Content-Disposition'] = "attachment; filename=\"#{filename}.xlsx\""
+        response.headers['Content-Disposition'] = "attachment; filename*=UTF-8''#{CGI.escape(filename)}.xlsx"
       # end
     end
 
@@ -58,33 +58,37 @@ module CustomTableConcern
       # Do not buffer the result when using proxy servers.
       headers['X-Accel-Buffering'] = 'no'
       # Set the filename
-      headers['Content-Disposition'] = "attachment; filename=\"#{filename}.csv\"" 
+      headers['Content-Disposition'] = "attachment; filename*=UTF-8''#{CGI.escape(filename)}.csv" 
 
       global_model_name = collection.model.model_name.singular
 
-      fields = helpers.custom_table_fields_definition_for(collection.model)
+      fs = helpers.custom_table_fields_definition_for(collection.model)
+
+      fields = @fields if !@fields.nil?
 
       # Allow pre-defined fields for export
-      if !@fields.nil?
-        fields = fields.select { |k, _v| local_assigns[:fields].include?(k) }
+      if !fields.nil?
+        fs = fs.select { |k, _v| fields.include?(k) }
       end 
+
+      csv_options = {col_sep: csv_separator}
 
       @csv_enumerator ||= Enumerator.new do |yielder|
 
         head = []
 
-        fields.each do |field, defs|
+        fs.each do |field, defs|
           head.push (defs[:label].nil? ? collection.model.human_attribute_name(field) : defs[:label])
         end
 
-        yielder << CSV.generate_line(head)
+        yielder << CSV.generate_line(head, **csv_options)
 
         collection.find_each do |item|
 
           row = []
           model_name = item.model_name.singular # Allows to show different class models in one table!
     
-          fields.each do |field, defs|
+          fs.each do |field, defs|
             next if defs[:table] == false
         
             value = helpers.raw_field_value_for(item, field)
@@ -101,7 +105,7 @@ module CustomTableConcern
             row += @extra_cols.call(item)
           end    
 
-          yielder << CSV.generate_line(row)
+          yielder << CSV.generate_line(row, **csv_options)
         end
       end
 
