@@ -1,0 +1,19 @@
+- if collection.respond_to? :total_pages
+  .custom-table-pagination.overflow-hidden
+    -# - if turbo_frame_request?
+    -#   - if !collection.last_page?
+    -#     = link_to_next_page collection, raw(t('views.pagination.next'))
+    -# - else
+
+    - begin
+      - if (collection.total_count > 25) && local_assigns[:per_page]
+        %nav.float-end.ms-2.d-none.d-sm-block
+          %ul.pagination
+            - [25, 50, 100].each do |p|
+              %li.page-item{class: (collection.limit_value.to_i == p) ? "active" : ""}
+                = link_to p, url_for(params.permit!.merge({per: p})), class: "page-link"
+
+      = paginate(collection, theme: 'bootstrap-5') 
+    - rescue
+      = link_to_prev_page collection, t("views.pagination.previous").html_safe, class: "btn btn-outline-primary"
+      = link_to_next_page collection, t("views.pagination.next").html_safe, class: "btn btn-outline-primary"

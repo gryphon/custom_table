@@ -392,6 +392,8 @@ module CustomTable
       params[:modal_edit] = true if params[:modal_edit].nil?
       params[:with_select] = true if params[:with_select].nil? && params[:batch_actions]
       params[:batch_activator] = true if params[:batch_activator].nil? && params[:batch_actions] === true
+      params[:per_page] = true if params[:per_page].nil?
+      params[:paginator_position] = "bottom" if params[:paginator_position].nil?
 
       render "custom_table/table", params do
         yield

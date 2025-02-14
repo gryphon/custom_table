@@ -115,6 +115,8 @@ Options available are:
 * ```group_by``` set to helper name to group records by result of it. Be sure to disable pagination as it will only group current page records 
 * ```expanded``` expand grouped or trees by default
 * ```sortable``` set to true to allow to sort models. Model needs to have ```position``` attribute and use ```acts_as_list``` gem to be sorted. Gem uses ```SortableController``` JS component based on top of SortableJS for sorting. Add `order(:position)` after `custom_table` call in controller to order items correctly.
+* ```per_page``` set to false to hide items-per-page selector
+* ```paginator_position``` set to `top` or `bottom`. default is `bottom`
 
 ## Rendering search panel
 

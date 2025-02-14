@@ -19,6 +19,9 @@
 
 - fields = fields.except(*local_assigns[:skip_fields]) if !local_assigns[:skip_fields].nil?
 
+- if local_assigns[:paginator_position].to_s == "top"
+  = render "custom_table/paginator", local_assigns.merge(collection: collection)
+
 %div.table-wrapper.overflow-x-lg-scroll{data: {controller: "batch-actions"}, class: (local_assigns[:batch_activator] ? "batch-hidden" : "")}
 
   - if local_assigns[:batch_actions]
@@ -212,26 +215,5 @@
                     = found_totals[field]
             %th.text-end
 
-- if collection.respond_to? :total_pages
-  .custom-table-pagination.overflow-hidden
-    -# - if turbo_frame_request?
-    -#   - if !collection.last_page?
-    -#     = link_to_next_page collection, raw(t('views.pagination.next'))
-    -# - else
-
-    - begin
-      - if collection.total_count > 25
-        %nav.float-end.ms-2.d-none.d-sm-block
-          %ul.pagination
-            - [25, 50, 100].each do |p|
-              %li.page-item{class: (collection.limit_value.to_i == p) ? "active" : ""}
-                = link_to p, url_for(params.permit!.merge({per: p})), class: "page-link"
-
-      = paginate(collection, theme: 'bootstrap-5') 
-    - rescue
-      = link_to_prev_page collection, t("views.pagination.previous").html_safe, class: "btn btn-outline-primary"
-      = link_to_next_page collection, t("views.pagination.next").html_safe, class: "btn btn-outline-primary"
-
-  -# - "TODO: Remove with param"
-  -# - if false && turbo_frame_request? && params[:q].present?
-  -#   = link_to t("show_all"), url_for(q: params[:q]), data: {turbo: false}, class: "text-right"
+- if local_assigns[:paginator_position].to_s == "bottom"
+  = render "custom_table/paginator", local_assigns.merge(collection: collection)

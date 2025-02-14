@@ -45,11 +45,11 @@ module CustomTable
     # Can be overriden
     def boolean_icon c
       if c
-        return custom_table_icon("fa fa-check") if CustomTable.configuration.icons_framework == :fa
-        return custom_table_icon("bi bi-check") if CustomTable.configuration.icons_framework == :bi
+        return custom_table_icon("fa fa-check text-success") if CustomTable.configuration.icons_framework == :fa
+        return custom_table_icon("bi bi-check-lg text-success") if CustomTable.configuration.icons_framework == :bi
       else
-        return custom_table_icon("fa fa-times") if CustomTable.configuration.icons_framework == :fa
-        return custom_table_icon("bi bi-x") if CustomTable.configuration.icons_framework == :bi
+        return custom_table_icon("fa fa-times text-danger") if CustomTable.configuration.icons_framework == :fa
+        return custom_table_icon("bi bi-x-lg text-danger") if CustomTable.configuration.icons_framework == :bi
       end
     end
 
