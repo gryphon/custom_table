@@ -560,7 +560,7 @@ module CustomTable
     # Override for custom Edit button
     def custom_table_edit_button(path, options = {})
       options[:class] = "btn btn-outline-primary btn-sm action" if options[:class].nil?
-      link_to t("edit"), path, options
+      link_to(t("edit"), path, options)
     end  
 
   end
