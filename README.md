@@ -235,7 +235,7 @@ By default fieldset is integrated with ```turbo_editable``` gem and each field i
 Options available are:
 
 * ```label``` - if it cannot be received via field definition 
-* ```editable_params``` - hash of params to be passed to editable
+* ```editable_params``` - hash of params to be passed to editable. You can pass name of helper function as symbol which would be invoked for every record; record is passed via first parameter
 
 All options from fieldset are proxied to field. So you can declare it once if suitable.
 

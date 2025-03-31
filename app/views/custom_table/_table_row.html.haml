@@ -51,9 +51,15 @@
       - editable_enabled = defs[:editable]
       - editable_enabled = editable_enabled.call(item) if editable_enabled.respond_to?(:call)
 
-      - if editable_enabled
 
-        = editable item, field do
+      - if editable_enabled
+        - editable_params = {}
+        - if defs[:editable_params].is_a? Symbol
+          - editable_params = editable_params.merge(self.send(defs[:editable_params], item))
+        - elsif defs[:editable_params].is_a? Hash
+          - editable_params = editable_params.merge(defs[:editable_params])
+
+        = editable item, field, **editable_params do
           - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
             -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
             = link_to v, [namespace, item], data: {turbo: false}

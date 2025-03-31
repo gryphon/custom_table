@@ -44,6 +44,9 @@ module CustomTable
 
         @template.render "custom_table/#{params[:template]}", **params do
           if params[:editable] && has_editable?
+            if params[:editable_params].is_a? Symbol
+              params[:editable_params] = self.send(params[:editable_params], @object) 
+            end
             params[:editable_params] = {} if params[:editable_params].nil?
             editable_field = params[:editable_params][:field] || column
             @template.editable @object, editable_field, **params[:editable_params] do
