@@ -83,7 +83,7 @@ module CustomTable
     private
 
       def get_model model
-        helper_name = "#{model.underscore}_custom_table_fields"
+        helper_name = "#{model.underscore.sub('/', '_')}_custom_table_fields"
         if (! helpers.respond_to?(helper_name))
           return nil
         else
