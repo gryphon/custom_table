@@ -22,7 +22,9 @@
 - if local_assigns[:paginator_position].to_s == "top"
   = render "custom_table/paginator", local_assigns.merge(collection: collection)
 
-%div.table-wrapper.overflow-x-lg-scroll{data: {controller: "batch-actions"}, class: (local_assigns[:batch_activator] ? "batch-hidden" : "")}
+- wrapper_classes = ["table-wrapper", "overflow-x-lg-scroll", (local_assigns[:batch_activator] ? "batch-hidden" : ""), local_assigns[:wrapper_class]]
+
+%div{data: {controller: "batch-actions"}, class: wrapper_classes}
 
   - if local_assigns[:batch_actions]
     .batch-actions
@@ -31,7 +33,9 @@
       - else
         = self.send(local_assigns[:batch_actions])
 
-  %table{class: ["search-fields", "custom-table", "table", "table-hover", "table-sm", model_class.model_name.plural], data: {controller: "table toggle"}}
+  - table_classes = ["search-fields", "custom-table", "table", "table-hover", "table-sm", model_class.model_name.plural, local_assigns[:table_class]]
+
+  %table{class: table_classes, data: {controller: "table toggle"}}
     %thead.sticky-lg-top
       - if local_assigns[:quick_filter]
         %tr
