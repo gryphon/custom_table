@@ -40,7 +40,7 @@
 
   - fields.each do |field, defs|
     - next if defs[:table] == false
-    - td_classes = [field.to_s]
+    - td_classes = ["#{model_name}-#{field.to_s}"]
     - td_classes += ["text-end"] if defs[:amount]
     - td_classes += ["text-nowrap"] if defs[:nowrap]
     - td_classes += ["amount"] if defs[:amount]

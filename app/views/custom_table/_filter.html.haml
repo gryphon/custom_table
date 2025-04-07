@@ -1,6 +1,6 @@
-%div{class: CustomTable.configuration.filter_outer_wrapper_class}
+%div{class: (local_assigns[:outer_wrapper_class] || CustomTable.configuration.filter_outer_wrapper_class)}
 
-  %div{class: CustomTable.configuration.filter_inner_wrapper_class}
+  %div{class: (local_assigns[:inner_wrapper_class] || CustomTable.configuration.filter_inner_wrapper_class)}
 
     - url = local_assigns[:url].presence
     - variant = local_assigns[:variant].presence

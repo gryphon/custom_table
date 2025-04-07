@@ -396,7 +396,7 @@ module CustomTable
       params[:paginator_position] = "bottom" if params[:paginator_position].nil?
 
       render "custom_table/table", params do
-        yield
+        yield if block_given?
       end
     end
   
