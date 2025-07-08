@@ -33,7 +33,7 @@
       - else
         = self.send(local_assigns[:batch_actions])
 
-  - table_classes = ["search-fields", "custom-table", "table", "table-hover", "table-sm", model_class.model_name.plural, local_assigns[:table_class]]
+  - table_classes = ["search-fields", "custom-table", "table", "table-hover", "table-vcenter", "table-sm", model_class.model_name.plural, local_assigns[:table_class]]
 
   %table{class: table_classes, data: {controller: "table toggle"}}
     %thead.sticky-lg-top
@@ -56,7 +56,7 @@
 
         - if local_assigns[:with_select]
           %th.checkbox-col
-            = check_box_tag "check-all", "", true, data: {"toggle-target": "toggler", "action": "toggle#toggle batch-actions#refresh"}
+            = check_box_tag "check-all", "", true, data: {"toggle-target": "toggler", "action": "toggle#toggle batch-actions#refresh"}, class: "form-check-input form-check-input-sm boolean optional"
         - if local_assigns[:with_index]
           %th= "#"
 
@@ -68,7 +68,10 @@
           %th{class: cls}
 
             - if local_assigns[:batch_activator] && index==0
-              %input{type: "checkbox", data: {"batch-actions-target": "activator", action: "batch-actions#activate"}}
+              %input.valign-middle{type: "checkbox", data: {"batch-actions-target": "activator", action: "batch-actions#activate"}}
+
+            - label = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
+            - label = content_tag(:abbr, label, title: defs[:hint]) if !defs[:hint].blank?
 
             - if !defs[:sort].nil? && !@q.nil?
               - defs[:sort] = {} if defs[:sort]===true
@@ -76,9 +79,9 @@
               - sort_order = defs[:sort][:default_order].blank? ? :asc : defs[:sort][:default_order]
               - if !@q.nil?
                 = sort_link @q, sort_field, default_order: sort_order, data: {sort: "custom-table-sort-#{sort_field}-#{sort_order}"} do
-                  = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
+                  = label
             - else
-              = defs[:label].nil? ? model_class.human_attribute_name(field) : defs[:label]
+              = label
 
         - if !local_assigns[:skip_actions]
           %th.text-end
@@ -214,7 +217,10 @@
               %th{class: [field.to_s, "text-end"]}
                 - if !found_totals[field].nil?
                   - if found_totals[field].is_a?(Numeric)
-                    = amount_color found_totals[field]
+                    - if found_totals[field].is_a?(Integer)
+                      = amount_round_color found_totals[field]
+                    - else
+                      = amount_color found_totals[field]
                   - else
                     = found_totals[field]
             %th.text-end

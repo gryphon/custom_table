@@ -148,7 +148,6 @@ module CustomTable
           else
             if collection.respond_to?(:total_pages) && (!model_class.columns_hash[field.to_s].nil? || !fields[field][:total_scope].nil?) 
               # We can try to sum value from database
-
               if fields[field][:total_scope].nil?
                 out[field] = collection.except(:limit, :offset, :order, :group).distinct(false).sum(field)
               else
@@ -170,7 +169,7 @@ module CustomTable
   
     # Same as above but for Export only
     def raw_field_value_for item, field, definitions: nil, variant: nil
- 
+
       defs = definitions
 
       model_name = item.model_name.singular
@@ -487,7 +486,7 @@ module CustomTable
       fields.each do |field, defs|
         if !totals.nil? && totals.has_key?(field) && totals[field].nil? # Auto-counting
           fields_totals[field] = 0 if fields_totals[field].nil?
-          fields_totals[field] += raw_field_value_for(item, field, definitions: defs, variant: variant).to_f rescue 0
+          fields_totals[field] += (raw_field_value_for(item, field, definitions: defs, variant: variant) || 0)rescue 0
         end
       end
       return fields_totals

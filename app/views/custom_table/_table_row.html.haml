@@ -18,7 +18,7 @@
         - if local_assigns[:has_children]
           = tree_opener(item.id, local_assigns[:has_children], local_assigns[:expanded])
       - else
-        %span.ms-2
+        %span
           = custom_table_icon(custom_table_tree_child_icon_class)
 
   - if local_assigns[:sortable]
@@ -28,7 +28,7 @@
   - if local_assigns[:with_select]
     %td.checkbox-col
       - if local_assigns[:with_select].to_s == "true"
-        = check_box_tag "#{item.model_name.plural}[]", item.id, (!params[item.model_name.plural.to_sym].blank?) && (params[item.model_name.plural.to_sym].include?(item.id.to_s)), data: {"toggle-target": "checkbox", "batch-actions-target": "checkbox", "action": "toggle#recalculateToggler batch-actions#refresh"}
+        = check_box_tag "#{item.model_name.plural}[]", item.id, (!params[item.model_name.plural.to_sym].blank?) && (params[item.model_name.plural.to_sym].include?(item.id.to_s)), data: {"toggle-target": "checkbox", "batch-actions-target": "checkbox", "action": "toggle#recalculateToggler batch-actions#refresh"}, class: "form-check-input form-check-input-sm boolean optional align-middle"
       - else
         = self.send(local_assigns[:with_select], item, position)
 

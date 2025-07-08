@@ -28,9 +28,9 @@ module CustomTable
     end
 
     def custom_table_tree_child_icon_class
-      return "fa fa-arrow-right" if CustomTable.configuration.icons_framework == :fa
-      return "bi bi-arrow-return-right" if CustomTable.configuration.icons_framework == :bi
-      return "ti ti-arrow-right" if CustomTable.configuration.icons_framework == :ti
+      return "fa fa-arrow-right ms-2" if CustomTable.configuration.icons_framework == :fa
+      return "bi bi-arrow-return-right ms-2" if CustomTable.configuration.icons_framework == :bi
+      return "ti ti-corner-down-right" if CustomTable.configuration.icons_framework == :ti
     end
 
     def custom_table_cancel_icon

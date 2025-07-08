@@ -26,7 +26,7 @@ module CustomTableConcern
     collection = @q.result(distinct: true)
     # collection = collection.page(params[:page]).per(per_page) if format_web && paginate
 
-    params[:page] = 1 if !params[:per].nil?
+    # params[:page] = 1 if !params[:per].nil?
 
     if !current_user.nil?
       current_user.save_custom_table_settings(collection.model, variant, per_page: params[:per]) if !params[:per].nil? && params[:do_not_save_settings].nil?

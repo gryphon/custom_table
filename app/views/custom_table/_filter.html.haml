@@ -47,7 +47,7 @@
 
           - if field[:type] == :boolean
 
-            = f.input field[:q], as: :boolean, input_html: {}, required: false, label: label, unchecked_value: "", **hvh
+            = f.input field[:q], as: :boolean, input_html: {}, ct_inline_boolean_wrapper_html: {class: "mb-0"}, required: false, label: label, unchecked_value: "", **hvh
 
           - if field[:type] == :switch
 
