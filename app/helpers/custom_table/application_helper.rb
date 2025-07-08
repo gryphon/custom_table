@@ -109,7 +109,11 @@ module CustomTable
         elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)
           return not_set if (item.send(field) rescue nil).nil?
           return item.send(field) if !defs.nil? && defs[:amount] === false # Showing simple output if amount is false
-          return amount(item.send(field)) rescue ""
+          if item.class.columns_hash[field.to_s].type == :integer
+            return amount_round(item.send(field)) rescue ""
+          else
+            return amount(item.send(field)) rescue ""
+          end
         else
           # Non-column attribute
           v = (item.send(field).presence || not_set) rescue nil
