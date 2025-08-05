@@ -48,6 +48,7 @@ module CustomTable
               params[:editable_params] = self.send(params[:editable_params], @object) 
             end
             params[:editable_params] = {} if params[:editable_params].nil?
+            params[:editable_params][:display] = "block" if params[:size].to_s == "lg"
             editable_field = params[:editable_params][:field] || column
             @template.editable @object, editable_field, **params[:editable_params] do
               if block_given?

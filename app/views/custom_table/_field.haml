@@ -1,8 +1,9 @@
-%div.d-flex.justify-content-between.custom-table-field
-  %b
-    - if local_assigns[:hint]
-      %abbr{title: hint}= label
-    - else
-      = label
-  %span.text-end.d-inline{id: "#{column}_#{object.model_name.singular}_#{object.id}"}= yield
+%div.custom-table-field{class: (local_assigns[:size] == 'lg') ? "" : "d-flex justify-content-between"}
+  %div
+    %b
+      - if local_assigns[:hint]
+        %abbr{title: hint}= label
+      - else
+        = label
+  %div{id: "#{column}_#{object.model_name.singular}_#{object.id}", class: (local_assigns[:size] == 'lg') ? "" : "text-end d-inline"}= yield
 -# %dt{class: adaptive ? "col-lg-2 col-md-5" : "col-5"}= label
