@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'database_cleaner-active_record'
   spec.add_development_dependency 'sqlite3'
 
-  spec.add_dependency "rails", "~> 7.0"
+  spec.add_dependency "rails", ">= 7.0"
   spec.add_dependency "ransack", '~> 4.0'
   spec.add_dependency "kaminari", '~> 1.2'
   # spec.add_dependency "devise", '~> 4.9' # Now optional

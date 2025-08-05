@@ -1,0 +1,27 @@
+uz:
+  custom_table:
+    search: Qidirish
+    customize_table: Ustunlarni sozlash
+    customize_table_description: Jadvalda ko'rinadigan ustunlarni tanlang va ularning ko'rinish tartibini belgilang
+    customization_not_allowed: "%{model} jadvalini sozlash mumkin emas"
+    customization_saved: Jadval sozlamalari saqlandi!
+    cannot_save_customization: Jadval sozlamalarini saqlashda xatolik
+    save_settings: Sozlamalarni saqlash
+    reset_settings: Sozlamalarni tiklash
+    are_you_sure: Ishonchingiz komilmi?
+    date_from: dan
+    date_to: gacha
+    clear_search: Qidiruvni tozalash
+    no_records_found: Yozuvlar topilmadi
+    download_as_csv: CSV formatida yuklab olish
+    huge_xlsx_alert: Excel formatida yuklab olish uchun juda ko'p yozuvlar. %{csv} formatini sinab ko'ring
+    quick_search: Tez qidiruv
+    download_only_selected_fields: Tanlangan ustunlarni yuklab olish
+    show_all_filters: Barcha filtrlarni ko'rsatish
+    batch_update: Tanlanganlarni o'zgartirish
+    batch_destroy: Tanlanganlarni o'chirish
+    batch_action_description: O'zgartirish uchun belgilangan maydonlarni belgilang
+    batch_selected_items_count:
+      one: "O'zgartirish uchun bitta yozuv tanlandi"
+      few: "%{count} ta yozuv o'zgartirish uchun tanlandi"
+      many: "%{count} ta yozuv o'zgartirish uchun tanlandi"

@@ -151,7 +151,10 @@
                     - next if defs[:table] == false
                     - if !group_fields_totals[field].nil?
                       %th{class: [field.to_s, "text-end"]}
-                        = amount_color group_fields_totals[field]
+                        - if defs[:type] == :integer
+                          = amount_round_color group_fields_totals[field]
+                        - else
+                          = amount_color group_fields_totals[field]
                     - else
                       %th{class: [field.to_s, "text-start"]}
                         - if !shown
