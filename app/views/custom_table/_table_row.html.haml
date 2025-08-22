@@ -4,7 +4,7 @@
 - row_class_helper = local_assigns[:row_class] || "#{model_name}_row_class"
 - row_class = [(self.send(row_class_helper, item) rescue "")]
 
-- row_class += ["child-of-#{item.parent_id}", (local_assigns[:expanded] ? "" : "d-none")] if local_assigns[:tree] && !item.parent_id.nil?
+- row_class += ["child-row", "child-of-#{item.parent_id}", (local_assigns[:expanded] ? "" : "d-none")] if local_assigns[:tree] && !item.parent_id.nil?
 - row_class += ["child-of-#{local_assigns[:grouped_by_id]}", (local_assigns[:expanded] ? "" : "d-none")] if local_assigns[:grouped_by_id] 
 
 - tr_data = {}
@@ -13,13 +13,19 @@
 %tr{id: dom_id(item, "row"), :class => row_class, data: tr_data }
 
   - if local_assigns[:tree]
-    %td
-      - if item.parent_id.nil?
-        - if local_assigns[:has_children]
+    - if item.parent_id.nil?
+      - if local_assigns[:has_children]
+        %td.tree-handler
           = tree_opener(item.id, local_assigns[:has_children], local_assigns[:expanded])
       - else
-        %span
-          = custom_table_icon(custom_table_tree_child_icon_class)
+        %td
+    - else
+      - if local_assigns[:has_children]
+        %td
+      - else
+        %td.tree-child-handler{class: local_assigns[:last_child] ? "last-child" : ""}
+          %span.tree-arrow
+            -# = custom_table_icon(custom_table_tree_child_icon_class)
 
   - if local_assigns[:sortable]
     %td
@@ -44,6 +50,7 @@
     - td_classes += ["text-end"] if defs[:amount]
     - td_classes += ["text-nowrap"] if defs[:nowrap]
     - td_classes += ["amount"] if defs[:amount]
+    - td_classes += ["first-field"] if field.to_s == fields.keys.first.to_s
 
     %td{class: td_classes, id: dom_id(item, field)}
       - v = field_value_for(item, field, definitions: defs, variant: variant)
@@ -60,15 +67,15 @@
           - editable_params = editable_params.merge(defs[:editable_params])
 
         = editable item, field, **editable_params do
-          - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
+          - if defs[:link_to_show] == true && custom_table_has_show_route?(item, namespace: namespace, parent: local_assigns[:parent]) && can?(:show, item)
             -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
-            = link_to v, [namespace, item], data: {turbo: false}
+            = link_to v, [namespace, local_assigns[:parent], item], data: {turbo: false}
           - else
             = v
       - else
-        - if defs[:link_to_show] == true && custom_table_has_show_route?(item) && can?(:show, item)
+        - if defs[:link_to_show] == true && custom_table_has_show_route?(item, namespace: namespace, parent: local_assigns[:parent]) && can?(:show, item)
           -# = link_to v, url_for(controller: controller_name, action: "show", id: item.to_param)
-          = link_to v, [namespace, item], data: {turbo: false}
+          = link_to v, [namespace, local_assigns[:parent], item], data: {turbo: false}
         - else
           = v
 
@@ -82,7 +89,7 @@
       - elsif self.class.method_defined?("#{model_name}_custom_table_actions")
         = self.send("#{model_name}_custom_table_actions", item)
       - if local_assigns[:skip_default_actions].nil?
-        - local_assigns[:force_edit_button] = true if local_assigns[:force_edit_button].nil? && !custom_table_has_show_route?(item)
+        - local_assigns[:force_edit_button] = true if local_assigns[:force_edit_button].nil? && !custom_table_has_show_route?(item, namespace: namespace, parent: local_assigns[:parent])
         - if (local_assigns[:force_edit_button]) && can?(:update, item)
           = custom_table_edit_button([:edit, namespace, local_assigns[:parent], item], id: "edit_#{item.model_name.singular}_#{item.id}", modal: local_assigns[:modal_edit])
         - if can? :destroy, item

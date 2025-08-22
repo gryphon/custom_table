@@ -40,8 +40,6 @@ table.custom-table {
 
   }
 
-
-
   tr.sticky, thead.sticky {
     position: sticky;
     background: white;
@@ -63,6 +61,72 @@ table.custom-table {
   }
   .text-sm {
     font-size: 11px;
+  }
+
+  .tree-handler {
+    overflow: hidden;
+    text-align: center;
+    .tree-opener {
+      position: relative;
+      &.opened {
+        &::after {
+          content: '';
+          border-left: 2px dotted gray;
+          position: absolute;
+          right: calc(50% - 1px);
+          top: 50%;
+          height: 200px;
+        }
+      }
+    }
+  }
+
+  .tree-child-handler {
+    overflow: hidden;
+    text-align: center;
+
+    .tree-arrow {
+      position: relative;
+
+      &::before {
+        content: '';
+        border-top: 2px dotted gray;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 100px;
+      }
+
+      &::after {
+        content: '';
+        border-left: 2px dotted gray;
+        position: absolute;
+        right: calc(50% - 1px);
+        top: -100px;
+        height: 200px;
+      }
+    }
+
+    &.last-child {
+      .tree-arrow {
+        &::after {
+          bottom: 50% !important;
+          top: auto !important;
+        }
+      }
+    }
+
+  }
+
+  .child-row .first-field {
+    position: relative;
+    padding-left: 20px;
+    &::before {
+      content: "ᗒ";
+      position: absolute;
+      left: 0;
+      top: calc(50% - 0.59em)
+    }
   }
 
   .tree-opener {

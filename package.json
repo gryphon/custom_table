@@ -8,6 +8,10 @@
     "type": "git",
     "url": "git://github.com/gryphon/custom_table.git"
   },
+  "files": [
+    "app/assets/**/*",
+    "app/javascript/**/*"
+  ],
   "author": "Gryphon",
   "license": "ISC",
   "homepage": "https://github.com/gryphon/custom_table",

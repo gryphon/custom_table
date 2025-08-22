@@ -73,10 +73,10 @@ module CustomTable
     def fieldset object=nil, **params, &block
 
       builder = FieldsetBuilder.new(object, self, **params)
-      output = capture(builder, &block)
+      output = capture(builder, &block) if block_given?
 
       render "custom_table/fieldset" do
-        output
+        output if block_given?
       end
 
     end

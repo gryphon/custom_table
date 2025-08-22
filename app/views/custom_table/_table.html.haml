@@ -112,7 +112,7 @@
 
               - childs.each do |item|
                 - position+=1
-                = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals})
+                = render "custom_table/table_row", local_assigns.merge({item: item, fields: fields, position: position, fields_totals: fields_totals, tree: true, last_child: (item == childs.last)})
 
       - elsif local_assigns[:group_by]
 

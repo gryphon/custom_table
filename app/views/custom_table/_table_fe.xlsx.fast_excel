@@ -98,12 +98,22 @@ collection.except(:limit, :offset).send(iterator) do |item|
         value = value.to_date if !value.nil?
         column_formats[field] = workbook.number_format("[$-409]dd/mm/yy;@").set(align: { h: :center })
       elsif item.class.columns_hash[field.to_s] && [:integer, :float, :decimal].include?(item.class.columns_hash[field.to_s].type)
-        column_formats[field] = workbook.number_format("#,##0.00") if (defs[:amount]!=false)
+        if (defs[:amount]!=false)
+          if item.class.columns_hash[field.to_s].type == :integer
+            column_formats[field] = workbook.number_format("#,##0")
+          else
+            column_formats[field] = workbook.number_format("#,##0.00")
+          end
+        end
       elsif [Date, ActiveSupport::TimeWithZone].include?(value.class)
         value = value.to_date if !value.nil?
         column_formats[field] = workbook.number_format("[$-409]dd/mm/yy;@").set(align: { h: :center })
       elsif defs[:amount] || value.is_a?(Numeric)
-        column_formats[field] = workbook.number_format("#,##0.00")
+        if defs[:type] == :integer
+          column_formats[field] = workbook.number_format("#,##0")
+        else
+          column_formats[field] = workbook.number_format("#,##0.00")
+        end
       else
         column_formats[field] = local_assigns[:generic_data_format]
       end

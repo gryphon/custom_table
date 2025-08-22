@@ -385,8 +385,10 @@ module CustomTable
       custom_table_customizable_fields_for(model, variant).count.positive?
     end
   
-    def custom_table_data collection, variant=nil, **params
+    def custom_table_data collection, variant=nil, **params, &block
 
+      content = capture(&block) if block_given?
+      
       params[:collection] = collection
       params[:variant] = variant
       params[:paginate] = true if params[:paginate]!=false
@@ -399,30 +401,34 @@ module CustomTable
       params[:paginator_position] = "bottom" if params[:paginator_position].nil?
 
       render "custom_table/table", params do
-        yield if block_given?
+        content if block_given?
       end
     end
   
     # Data for updating values via turbo according object id and field name
-    def custom_table_row_data item, variant = nil, **params
+    def custom_table_row_data item, variant = nil, **params, &block
   
+      content = capture(&block) if block_given?
+
       params[:item] = item
       params[:variant] = variant
       params[:namespace] = (controller.class.module_parent == Object) ? nil : controller.class.module_parent.to_s.underscore.to_sym
       
       render "custom_table/table_row_data", params do
-        yield
+        content if block_given?
       end
     end
   
     def custom_table_filter search_model, variant=nil, **params, &block
-
+      
       return "NO @q (Ransack) object" if @q.nil?
+
+      content = capture(&block) if block_given?
 
       params[:search_model] = search_model
       params[:variant] = variant
       render "custom_table/filter", params do |f|
-        yield if !block.nil?
+        content if block_given?
       end
     end
 
@@ -549,8 +555,14 @@ module CustomTable
     end
 
     # Override for custom logic (namespaces, inheritance, etc)
-    def custom_table_has_show_route?(item)
-      return (!url_for(controller: item.model_name.plural, action: "show", id: 1).nil?) rescue return false
+    def custom_table_has_show_route?(item, namespace: nil, parent: nil)
+      # abort Rails.application.routes.recognize_path(url_for([namespace, parent, item, action: 'edit'])).inspect
+      # abort (route_for([namespace, parent, item, action: 'edit']) rescue false).inspect# if item.model_name.plural == "box_templates"
+      begin
+        return !Rails.application.routes.recognize_path(url_for([namespace, parent, item])).nil?
+      rescue
+        return false
+      end
     end  
 
     # Override for custom Delete button
