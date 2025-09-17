@@ -116,9 +116,11 @@
 
       - elsif local_assigns[:group_by]
 
+        - fields_definitions = custom_table_fields_definition_for(model_class, variant)
+
         - if collection.length > 0
 
-          - grouped_collection = collection.group_by{|i| self.send(local_assigns[:group_by], i)}
+          - grouped_collection = collection.group_by{|i| raw_field_value_for(i, local_assigns[:group_by]) || self.send(local_assigns[:group_by], i)}
 
           -# - (grouped_collection[nil] || []).each do |ungrouped_items|
           -#   - ungrouped_items.each do |item|
@@ -144,7 +146,7 @@
                 - if group_fields_totals.values.empty?
                   %th{class: ["text-start", "text-nowrap"], colspan: fields.length}
                     = tree_opener(group_id, true, local_assigns[:expanded])
-                    = group.to_s
+                    = fields_definitions[local_assigns[:group_by]].nil? ? group.to_s : field_value_for(items[0], local_assigns[:group_by])
                 - else
                   - shown = false
                   - fields.each do |field, defs|
@@ -160,7 +162,7 @@
                         - if !shown
                           %span.text-nowrap
                             = tree_opener(group_id, true, local_assigns[:expanded])
-                            = render(group) rescue group.to_s
+                            = fields_definitions[local_assigns[:group_by]].nil? ? group.to_s : field_value_for(items[0], local_assigns[:group_by])
                           - shown = true
                 - if !local_assigns[:skip_actions]
                   %th.text-end
