@@ -2,10 +2,10 @@ module CustomTableConcern
   extend ActiveSupport::Concern
 
   included do
-    helper CustomTable::ApplicationHelper
-    helper CustomTable::FieldsetHelper
-    helper CustomTable::IconsHelper
-
+    # This will not allow to override helpers from inside the app:
+    # ApplicationHelper.include CustomTable::ApplicationHelper
+    # ApplicationHelper.include CustomTable::FieldsetHelper
+    # ApplicationHelper.include CustomTable::IconsHelper
   end
 
   class_methods do 

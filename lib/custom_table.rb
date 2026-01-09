@@ -1,6 +1,7 @@
 require "custom_table/version"
 require "custom_table/engine"
 require "custom_table/configuration"
+
 module CustomTable
 
   def self.configuration

@@ -22,9 +22,13 @@
 - if local_assigns[:paginator_position].to_s == "top"
   = render "custom_table/paginator", local_assigns.merge(collection: collection)
 
-- wrapper_classes = ["table-wrapper", "overflow-x-lg-scroll", (local_assigns[:batch_activator] ? "batch-hidden" : ""), local_assigns[:wrapper_class]]
+- wrapper_styles = []
+- wrapper_classes = ["custom-table-wrapper", "overflow-x-lg-scroll", (local_assigns[:batch_activator] ? "batch-hidden" : ""), local_assigns[:wrapper_class]]
+- if !local_assigns[:height].blank?
+  - wrapper_classes.push("inline-scroll") 
+  - wrapper_styles.push("max-height: #{local_assigns[:height]}")
 
-%div{data: {controller: "batch-actions"}, class: wrapper_classes}
+%div{data: {controller: "batch-actions"}, class: wrapper_classes, style: wrapper_styles.join("; ")}
 
   - if local_assigns[:batch_actions]
     .batch-actions
