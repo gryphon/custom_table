@@ -496,7 +496,7 @@ module CustomTable
       fields.each do |field, defs|
         if !totals.nil? && totals.has_key?(field) && totals[field].nil? # Auto-counting
           fields_totals[field] = 0 if fields_totals[field].nil?
-          fields_totals[field] += (raw_field_value_for(item, field, definitions: defs, variant: variant) || 0)rescue 0
+          fields_totals[field] += (raw_field_value_for(item, field, definitions: defs, variant: variant).to_f || 0) rescue 0
         end
       end
       return fields_totals
